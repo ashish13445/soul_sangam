@@ -107,7 +107,7 @@ onUnmounted(stopPolling);
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('checkout')" method="post" as="button">
+                                        <DropdownLink :href="route('event.logout')" method="post" as="button">
                                             Check Out
                                         </DropdownLink>
                                     </template>

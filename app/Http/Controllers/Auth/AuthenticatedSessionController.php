@@ -30,26 +30,47 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request)
-    {
+    {       $request->session()->start();
+
         $request->authenticate();
-
         $request->session()->regenerate();
+        $token = $request->user()->createToken('Soul Sangam')->plainTextToken;
+        if ($request->wantsJson()) {
+        return response()->json([
+            'message' => 'Login successful',
+            'user' => Auth::user(),
+            'token'=>$token
+        ], 200);
+    }
+        $redirectTo = $request->session()->get('url.intended');
         
-
-        return redirect()->route('dashboard'); // This will redirect to the intended URL after login
+        if ($redirectTo) {
+            return redirect()->to($redirectTo);
+        
+        } 
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): RedirectResponse
+   
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        // Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
+        // $request->session()->invalidate();
+        // $request->user()->tokens()->delete();
 
-        $request->session()->regenerateToken();
+        // $request->session()->regenerateToken();
 
-        return redirect('/');
+        // 
+        $request->user()->tokens()->delete();
+        
+        Auth::logout();
+
+    // Invalidate the session
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    if ($request->wantsJson()) {
+    return response()->json(['message' => 'Logged out successfully.']);
+    }
+    return redirect('/');
     }
 }

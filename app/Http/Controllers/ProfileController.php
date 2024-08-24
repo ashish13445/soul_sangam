@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -18,10 +18,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $user->allow_dating = (bool) $user->allow_dating; // Convert 1/0 to true/false
+    
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'user' => $user,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-        ]);
+        ]); 
     }
 
     /**
@@ -29,15 +33,26 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $dob = Carbon::parse($request->input('dob'));
+        $age = $dob->age;
+
+        // Fill the user's information with validated data
         $request->user()->fill($request->validated());
 
+        // Update the user's age
+        $request->user()->age = $age;
+
+        // If the email has been changed, reset email verification
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
+        // Save the updated user data
         $request->user()->save();
 
+        // Redirect back to the profile edit page
         return Redirect::route('profile.edit');
+
     }
 
     /**

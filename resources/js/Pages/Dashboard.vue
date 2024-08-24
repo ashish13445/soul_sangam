@@ -4,9 +4,23 @@
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
     </template>
-    <div v-for="ticket in tickets" :key="ticket.id" class="py-12">
+    <div class="w-screen flex justify-center">
+      <div class="my-5 p-10 flex justify-between bg-secondary w-full max-w-3xl lg:max-w-5xl xl:max-w-7xl h-96 rounded-xl">
+            <Link href="dating" class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
+                DATING
+            </Link>
+            <Link href="auth/events/page" class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
+                LIVE EVENTS
+            </Link>
+            <Link class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold">
+                PRIVATE <br/> MATCHMAKING
+            </Link>
+        </div>
+    </div>
+    
+    <!-- <div v-for="ticket in tickets" :key="ticket.id" class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-secondary overflow-hidden shadow-sm sm:rounded-lg">
           <div class="lg:flex justify-between">
             <img src="../../images/soul.jpg" style="height: 240px;" class="w-full lg:w-auto">
             <div class="p-4 px-20">
@@ -25,18 +39,18 @@
               <div v-else-if="isEventUpcoming(ticket.event)" class="bg-yellow-100 h-full w-40 flex flex-col justify-center items-center">
                 <p class="text-xl font-extrabold text-blue-800">{{ ticket.countdown }} Days Left </p>
               </div>
-              <div v-else class="bg-gray-100 h-full px-5 flex flex-col justify-center items-center">
+              <div v-else class="bg-extralightblue h-full px-5 flex flex-col justify-center items-center">
                 <h1 class="text-xl font-extrabold">Event Ended</h1>
               </div>
             </div>
-            <div class="flex flex-col items-center justify-center">
+            <div class="flex flex-col items-center justify-center px-5">
               <QrCodeGenerator :text="ticket.ticket_code"/>
               <p>{{ ticket.ticket_code }}</p>
             </div>
           </div>                  
         </div>
       </div>
-    </div>
+    </div> -->
   </AuthenticatedLayout>
 </template>
 
@@ -44,7 +58,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import QrCodeGenerator from '@/Components/QrCodeGenerator.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head ,Link} from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 

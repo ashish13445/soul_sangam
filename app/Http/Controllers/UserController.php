@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      */
@@ -98,7 +99,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
     }
 
     /**
@@ -113,4 +114,26 @@ class UserController extends Controller
     {
         return User::all();
     }
+
+    public function updateProfilePhoto(Request $request)
+{
+    $request->validate([
+        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $user = auth()->user();
+
+    // Delete the old profile photo if exists
+    if ($user->profile_picture) {
+        Storage::delete('public/profile_pictures/' . $user->profile_picture);
+    }
+    // Store the new profile photo
+    $fileName = time() . '.' . $request->photo->extension();
+    $request->photo->storeAs('public/profile_pictures', $fileName);
+
+    // Update user's profile photo path in the database
+    $user->profile_picture = $fileName ;
+    $user->save();
+    return response()->json(['profile_picture' => $user->profile_picture], 200);
+}
 }

@@ -3,6 +3,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import RadioButton from 'primevue/radiobutton';
+    
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps({
@@ -14,11 +16,22 @@ defineProps({
     },
 });
 
-const user = usePage().props.auth.user;
+const userAuth = usePage().props.auth.user;
+const user = usePage().props.user;
 
+console.log(user);
 const form = useForm({
-    name: user.name,
-    email: user.email,
+    name: userAuth.name,
+    email: userAuth.email,
+    dob: user.dob,
+    occupation : user.occupation,
+    education : user.education, 
+    city: user.city,
+    preference: user.preference,
+    allow_dating : user.allow_dating,
+    gender: user.gender,
+    bio: user.bio,
+    
 });
 </script>
 
@@ -84,6 +97,156 @@ const form = useForm({
                     A new verification link has been sent to your email address.
                 </div>
             </div>
+         
+
+            <div class="mt-4">
+                <InputLabel for="dob" value="Date of Birth" />
+
+                <TextInput
+                    id="dob"
+                    type="date"
+                    class="mt-1 block w-full"
+                    v-model="form.dob"
+                    required
+                    autocomplete="dob"
+                />
+
+                <InputError class="mt-2" :message="form.errors.dob" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="gender" value="Gender" />
+
+                <div class="flex flex-wrap gap-4">
+
+    <div class="flex items-center mt-1">
+        <RadioButton v-model="form.gender" inputId="male" name="gender" value="Male" />
+        <label for="male" class="ml-2">Male</label>
+    </div>
+    <div class="flex items-center">
+        <RadioButton v-model="form.gender" inputId="female" name="gender" value="Female" />
+        <label for="female" class="ml-2">Female</label>
+    </div>
+    <div class="flex items-center">
+        <RadioButton v-model="form.gender" inputId="others" name="gender" value="Others" />
+        <label for="others" class="ml-2">Others</label>
+    </div>
+  
+</div>
+</div>
+            <!-- <div class="mt-4">
+                    <InputLabel for="profile_picture" value="Profile Picture" />
+                    <input
+                        id="profile_picture"
+                        type="file"
+                        class="mt-1 block w-full"
+                        @change="handleFileChange"
+                        accept="image/*"
+                    />
+                    <InputError class="mt-2" :message="form.errors.profile_picture" />
+                </div> -->
+
+            <div class="mt-4">
+                <InputLabel for="occupation" value="Occupation" />
+
+                <TextInput
+                    id="occupation"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.occupation"
+                    required
+                    autocomplete="occupation"
+                />
+
+                <InputError class="mt-2" :message="form.errors.occupation" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="education" value="Education" />
+
+                <TextInput
+                    id="education"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.education"
+                    required
+                    autocomplete="education"
+                />
+
+                <InputError class="mt-2" :message="form.errors.education" />
+            </div>
+            
+            <div class="mt-4">
+                <InputLabel for="city" value="City" />
+
+                <TextInput
+                    id="city"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.city"
+                    required
+                    autocomplete="city"
+                />
+
+                <InputError class="mt-2" :message="form.errors.city" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="bio" value="Bio" />
+
+                <TextInput
+                    id="bio"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.bio"
+                    required
+                    autocomplete="bio"
+                />
+
+                <InputError class="mt-2" :message="form.errors.bio" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="preference" value="Preference" />
+
+                <div class="flex flex-wrap gap-4">
+
+    <div class="flex items-center mt-1">
+        <RadioButton v-model="form.preference" inputId="ingredient1" name="preference" value="Male" />
+        <label for="male" class="ml-2">Male</label>
+    </div>
+    <div class="flex items-center">
+        <RadioButton v-model="form.preference" inputId="ingredient2" name="preference" value="Female" />
+        <label for="female" class="ml-2">Female</label>
+    </div>
+    <div class="flex items-center">
+        <RadioButton v-model="form.preference" inputId="ingredient2" name="preference" value="Others" />
+        <label for="others" class="ml-2">Others</label>
+    </div>
+  
+</div>
+
+            </div>
+            <div class="mt-4">
+                <InputLabel for="preference" value="Allow Dating" />
+
+                <div class="flex flex-wrap gap-4">
+
+    <div class="flex items-center mt-1">
+        <RadioButton v-model="form.allow_dating" inputId="yes" name="allow_dating" :value='true' />
+        <label for="yes" class="ml-2">Yes</label>
+    </div>
+    <div class="flex items-center">
+        <RadioButton v-model="form.allow_dating" inputId="no" name="allow_dating" :value='false' />
+        <label for="no" class="ml-2">No</label>
+    </div>
+
+  
+</div></div>
+            
+            <!-- <div class="flex items-center justify-start mt-4">
+                
+                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Submit
+                </PrimaryButton>
+            </div> -->
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>

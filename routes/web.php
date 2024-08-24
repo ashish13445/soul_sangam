@@ -13,6 +13,8 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\Auth\CheckinController;
+use App\Http\Controllers\DatingController;
+
 
 use App\Http\Middleware\CorsMiddleware;
 
@@ -28,16 +30,16 @@ Route::get('/payment-cancel', [StripeController::class, 'paymentCancel'])->name(
 
 
 Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/page', function () {
+    return Inertia::render('Event/Index');
+})->middleware(['web'])->name('events.page');
 
-Route::get('/auth/events', function () {
+Route::get('/auth/events/page', function () {
     return Inertia::render('Event/Auth/Index');
-})->middleware(['web','auth', 'verified'])->name('auth.events');
+})->middleware(['web','auth','verified'])->name('auth.events.page');
 
 
 Route::get('/events/{id}', [EventController::class, 'show'])->name('event.get');
-Route::get('/auth/events/{id}', [EventController::class, 'authShow'])->name('auth.event.get');
-Route::get('/auth/event/participants', [EventController::class, 'getParticipants'])->name('participants.get');
-Route::post('/like/like',[LikeController::class,'store'])->name('likeUser');
 Route::post('/tickets', [TicketController::class, 'store']);
 Route::get('/purchase', [TicketController::class, 'purchase'])->name('purchase.ticket');
 Route::get('/tickets/get', [TicketController::class, 'getTickets']);
@@ -80,5 +82,19 @@ Route::get('event-profile', [UserController::class, 'create'])
 ->name('event.profile');
 
 Route::post('event-profile', [UserController::class, 'store']);
+Route::post('/profile/update-photo', [UserController::class, 'updateProfilePhoto']);
+
+
+Route::middleware(['web','auth', 'verified'])->group(function () {
+    Route::get('dating', [DatingController::class, 'index'])->name('dating.index');
+    Route::get('dating/profiles', [DatingController::class, 'showProfiles'])->name('dating.show.profiles');
+    Route::get('dating/profile/{id}', [ProfileController::class, 'show'])->name('dating.profile.show');
+    Route::post('dating/match', [DatingController::class, 'match'])->name('dating.match');
+    Route::get('dating/matches', [DatingController::class, 'matches'])->name('dating.matches');
+    Route::get('/auth/events/{id}', [EventController::class, 'authShow'])->name('auth.event.get');
+Route::get('/auth/event/participants', [EventController::class, 'getParticipants'])->name('participants.get');
+Route::post('/like/like',[LikeController::class,'store'])->name('likeUser');
+
+});
 
 require __DIR__.'/auth.php';

@@ -2,23 +2,26 @@
     
     <GuestLayout>
 
-    <div v-if="event" class="  w-screen  ">
+    <div v-if="event" class="  w-screen  text-black">
         <div class="bg-white rounded m-10 " >
             <img src="../../../images/soul.jpg" class="w-full h-80 object-cover">
         <div class="m-10">
             <h1 class="font-extrabold text-4xl">{{ event.name }}</h1>
         <p class="font-bold text-2xl py-2">Date: 
             <span class="text-gray-400">
-                {{ new Date(event.date).toDateString() }}
+                {{ new Date(event.start_date).toDateString() }}
             </span>
         </p>
         <p class="font-bold text-2xl py-2">City: 
             <span class="text-gray-400">{{ event.city }}</span>  
         </p>
         <div >
-            <button @click="submit" class="my-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+            <Link :href="`/auth/events/${event.id}`">
+
+            <Button  class="my-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 Buy Ticket
-            </button>
+            </Button>
+        </Link>
         </div>
     </div>
         </div>
@@ -32,7 +35,9 @@
 import { ref } from 'vue';
 import { usePage, Inertia } from '@inertiajs/inertia';
 import { loadStripe } from '@stripe/stripe-js';
-import {  router } from '@inertiajs/vue3';
+import {  router,Link } from '@inertiajs/vue3';
+
+import Button from 'primevue/button';
 
 import axios from 'axios';
 import GuestLayout from '@/Layouts/GuestLayout.vue';

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens,HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -28,7 +28,10 @@ class User extends Authenticatable
         'occupation',
         'education',
         'city',
-        'preference'
+        'preference',
+        'gender',
+        'allow_dating',
+        'bio'
     ];
 
     /**
@@ -60,8 +63,10 @@ class User extends Authenticatable
     }
 
 
-public function getProfilePictureUrlAttribute()
-{
-    return $this->profile_picture ? Storage::disk('public')->url('profile_pictures/' . $this->profile_picture) : null;
-}
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo 
+            ? asset('storage/profile_pictures/' . $this->profile_photo) 
+            : asset('images/default.png'); // Default image if none is uploaded
+    }
 }

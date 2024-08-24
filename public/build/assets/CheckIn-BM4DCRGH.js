@@ -1,0 +1,1 @@
+import{aE as n,u as a,v as e,b3 as c}from"./app-HtLgu-XO.js";const l=e("h1",null,"Check-in Successful",-1),u={__name:"CheckIn",props:["ticket","event"],setup(t){return(o,s)=>(n(),a("div",null,[l,e("p",null,"Welcome to the event: "+c(t.event.name),1),e("p",null,"Ticket Code: "+c(t.ticket.ticket_code),1)]))}};export{u as default};

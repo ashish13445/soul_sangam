@@ -24,16 +24,18 @@ return Application::configure(basePath: dirname(__DIR__))
                         \Illuminate\Session\Middleware\AuthenticateSession::class,
                         \App\Http\Middleware\CorsMiddleware::class,
                         \App\Http\Middleware\ShareUserWithInertia::class,
+                        \App\Http\Middleware\HandleInertiaRequests::class,
 
 
                     ]);
             
                     $middleware->group('api', [
-                        \App\Http\Middleware\CorsMiddleware::class,
-                        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+           
+                        \Illuminate\Session\Middleware\StartSession::class,
 
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        'throttle:api',
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // Other API middleware
                     ]);
 

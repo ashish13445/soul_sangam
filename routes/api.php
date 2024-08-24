@@ -1,26 +1,87 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\StripeController;
 use App\Http\Middleware\CorsMiddleware;
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
-// Route::middleware([CorsMiddleware::class])->group(function () {
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\CheckinController;
+use App\Http\Controllers\DatingController;
+use Illuminate\Support\Facades\Route;
 
-    // Route::post('/create-checkout-session', [StripeController::class, 'createCheckoutSession'])->middleware(['auth','web','verified'])->name('checkout');
-    //All the routes that belongs to the group goes here
+
+// Route::middleware('api')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->middleware('auth:sanctum');
+    
+    
+    Route::middleware('guest')->group(function () {
+        Route::get('register', [RegisteredUserController::class, 'create']);
+    
+        Route::post('register', [RegisteredUserController::class, 'store']);
+    
+        Route::get('login', [AuthenticatedSessionController::class, 'create']);    
+    
+        Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    
+        Route::get('forgot-password', [PasswordResetLinkController::class, 'create']);
+
+        Route::post('forgot-password', [PasswordResetLinkController::class, 'store']);
+    
+        Route::get('reset-password/{token}', [NewPasswordController::class, 'create']);
+
+        Route::post('reset-password', [NewPasswordController::class, 'store']);
+        });
+    
+    Route::middleware('auth')->group(function () {
+        Route::get('verify-email', EmailVerificationPromptController::class);
+    
+        Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)->middleware(['signed', 'throttle:6,1']);
+    
+        Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+                    ->middleware('throttle:6,1');
+    
+        Route::get('confirm-password', [ConfirmablePasswordController::class, 'show']);
+    
+        Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
+    
+        Route::put('password', [PasswordController::class, 'update']);
+    
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy']);
+                   
+    
+                    
+    Route::post('/checkin',[CheckinController::class, 'storeCheckin']);
+    
+    Route::get('/checkin',[CheckinController::class,'createCheckin']);
+    Route::get('/ticket/purchased/{eventId}', [CheckinController::class, 'checkTicket']);
+    Route::post('event/logout', [CheckinController::class, 'destroy']);
+    
+    
+    });
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('dating', [DatingController::class, 'index']);
+        Route::get('dating/profiles', [DatingController::class, 'showProfiles']);
+        Route::get('dating/profile/{id}', [ProfileController::class, 'show']);
+        Route::post('dating/match', [DatingController::class, 'match']);
+        Route::get('dating/matches', [DatingController::class, 'matches']);
+        Route::get('/auth/events/{id}', [EventController::class, 'authShow']);
+    Route::get('/auth/event/participants', [EventController::class, 'getParticipants']);
+    Route::post('/like/like',[LikeController::class,'store']);
+    
+    });
+
 // });
 
-// Route::get('/payment-success', [StripeController::class, 'paymentSuccess'])->name('payment.success.api');
-// Route::get('/payment-cancel', [StripeController::class, 'paymentCancel'])->name('payment.cancel.api');
-
-
-// Route::get('/events', [EventController::class, 'index']);
-// Route::get('/events/{id}', [EventController::class, 'show'])->name('event.get');
-// Route::post('/tickets', [TicketController::class, 'store']);
-// Route::post('/purchase', [TicketController::class, 'purchase']);

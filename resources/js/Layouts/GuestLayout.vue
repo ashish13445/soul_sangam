@@ -136,7 +136,7 @@ const showingNavigationDropdown = ref(false);
             </nav>
 
             <!-- Page Heading -->
-            <div class="w-screen h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100"> 
+            <div class="w-screen h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-primary"> 
         
 
         <!-- <div
