@@ -5,6 +5,13 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import ProfilePicture from '@/Components/ProfilePicture.vue';
 
+import Tooltip from 'primevue/tooltip';
+
+
+import Image from 'primevue/image';
+
+import Dock from 'primevue/dock';
+
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
@@ -12,6 +19,32 @@ import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 
 import Chip from 'primevue/chip';
+
+const items = ref([
+    {
+        label: 'Home',
+        icon: 'https://cdn-icons-png.flaticon.com/512/10473/10473299.png',
+        class : 'home'
+    },
+    {
+        label: 'Notifications',
+        icon: 'https://static.vecteezy.com/system/resources/previews/022/498/184/non_2x/3d-love-like-social-media-notification-icon-isolated-on-transparent-background-file-png.png',
+        class: 'matches'
+    },
+    {
+        label: 'Chat',
+        icon: 'https://static.vecteezy.com/system/resources/previews/018/741/982/non_2x/live-messaging-chat-and-message-symbol-user-interface-theme-3d-icon-rendering-illustration-isolated-in-transparent-background-png.png',
+        class: 'chat'
+    },
+    {
+        label: 'Preferences',
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Settings_%28iOS%29.png/600px-Settings_%28iOS%29.png',
+        class: 'settings'
+    },
+ 
+]);
+
+
 
 defineProps({
     mustVerifyEmail: {
@@ -31,61 +64,32 @@ const showModal = ref(false); // State to control modal visibility
         showModal.value = false;
     }
 const showingNavigationDropdown = ref(false);
+const currentContent = ref('home'); // Track the current content
+console.log(currentContent.value);
+const handleDockClick = (item) => {
+    currentContent.value = item.class;
+    console.log(currentContent.value);
+};
 </script>
 
+
+
 <template>
-
     <div>
-        <div class="flex">
-            <div class="w-1/5 bg-primary p-2">
-       <h1 class="text-white text-2xl font-extrabold px-7">
-        Profile
-       </h1>
-        <div class="py-12">
-            <div class=" mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="">
-                    <ProfilePicture/>
-                </div>
-
-                <div class=" p-3 bg-white shadow sm:rounded-lg">
-<p class="p-1">
-    <span class="text-xl font-bold"> {{ $page.props.user.name }}</span>
-</p>
-<p class="p-1">
-    <span class="text-md"> <Chip :label="$page.props.user.age " />
-    </span>
-</p>
-<p class="p-1">
-    <span class="text-md"> <Chip :label="$page.props.user.occupation " />
-    </span>
-</p>
-<p class="p-1">
-    <span class="text-md"> <Chip :label="$page.props.user.education " />
-    </span>
-</p>
-<p class="p-1">
-    <span class="text-md"> <Chip :label="$page.props.user.city " />
-    </span>
-</p>
-<p class="p-1">
-    <span class="text-md"> <Chip :label="$page.props.user.preference" />
-    </span>
-</p>
-                </div>
-
-                <!-- <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <DeleteUserForm class="max-w-xl" />
-                </div> -->
-            </div>
+        <!-- Dock window for larger screens (left) -->
+        <div class="dock-window hidden sm:block">
+            <Dock :model="items" position="left">
+                <template #itemicon="{ item }">
+                    <Image v-tooltip.top="item.label" :alt="item.label" role="button" :src="item.icon" style="width: 50px; height: 50px;" @click="handleDockClick(item)" />
+                </template>
+            </Dock>
         </div>
 
-
-            </div>
-            <div class="w-4/5 bg-secondary flex flex-col items-center ">
-
-            <nav class="">
+        <!-- Main content area -->
+        <div class="w-full h-screen flex flex-col bg-primary items-center justify-between">
+            <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
-                <div class="bg-white border-b border-gray-100  max-w-3xl px-4 sm:px-6 lg:px-8">
+                <div class="w-screen md:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
@@ -217,15 +221,44 @@ const showingNavigationDropdown = ref(false);
                     </div>
                 </div>
             </nav>
-            <main class="w-full lg:max-w-5xl">
-                <slot />
+
+       
+            <main class="w-full  lg:max-w-5xl h-full overflow-y-auto sm:mt-0 mb-24 sm:mb-0">
+                <slot :currentContent="currentContent" />
             </main>
+
+            <!-- Bottom Dock for smaller screens -->
+            <div class="dock-window-bottom block sm:hidden fixed bottom-0 w-full bg-gray-800 text-white z-20">
+                <Dock :model="items" position="bottom">
+                    <template #itemicon="{ item }">
+                        <Image v-tooltip.top="item.label" :alt="item.label" role="button" :src="item.icon" class="w-12 h-12" @click="handleDockClick(item)" />
+                    </template>
+                </Dock>
             </div>
-            <!-- Page Heading -->
-
-            <!-- Page Content -->
-
         </div>
-
     </div>
 </template>
+
+<style scoped>
+/* Custom styles to ensure proper layout for mobile */
+.main-content {
+    position: relative;
+}
+
+.main-content h-16 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.dock-window-bottom {
+    top: auto; 
+    bottom: 0;
+}
+
+main {
+    overflow-y: auto;
+}
+</style>

@@ -2,29 +2,76 @@
     
     <GuestLayout>
 
-    <div v-if="event" class="  w-screen  text-black">
-        <div class="bg-white rounded m-10 " >
-            <img src="../../../images/soul.jpg" class="w-full h-80 object-cover">
-        <div class="m-10">
-            <h1 class="font-extrabold text-4xl">{{ event.name }}</h1>
-        <p class="font-bold text-2xl py-2">Date: 
-            <span class="text-gray-400">
+    <div v-if="event" class=" max-w-7xl w-full text-black flex flex-col items-center">
+        <div class="bg-white rounded mt-10 w-2/3" >
+            <img
+  alt="event image"
+  :src="`/storage/event/${event.event_image}`"
+  class="w-full h-auto object-cover"
+/>   
+<div class="flex mt-5 mx-10 justify-between">
+    <h1 class="font-extrabold text-3xl">{{ event.name }}</h1>
+    <Link :href="`/auth/events/${event.id}`">
+
+<Button  class=" bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+    Buy Ticket
+</Button>
+</Link>
+</div>       
+
+<div class="mx-10 mb-2 ">
+        <p class=" text-xl py-1">
+            <span class="">
                 {{ new Date(event.start_date).toDateString() }}
             </span>
+            onwards
         </p>
-        <p class="font-bold text-2xl py-2">City: 
-            <span class="text-gray-400">{{ event.city }}</span>  
+        <p class="font-bold  py-2">
+            <Chip :label="event.city" class="border-2 border-blue-600 text-blue-600 mx-2"/>
+            <Chip :label="event.type" class="border-2 border-blue-600 text-blue-600"/>
+
+            <!-- <span class="text-gray-400">{{ event.city }}</span>   -->
         </p>
         <div >
-            <Link :href="`/auth/events/${event.id}`">
 
-            <Button  class="my-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-                Buy Ticket
-            </Button>
-        </Link>
         </div>
     </div>
         </div>
+        <div class=' w-full mt-5 flex'>
+            <div class="bg-white rounded-lg w-1/5 mx-5 p-5 h-content">
+1
+            </div>
+            <div class="bg-white rounded-lg w-3/5 mx-5 p-5 h-content">
+                <section class="p-5">
+                    <h1 class="text-2xl font-extrabold">
+                    About
+                </h1>
+                <p class="text-md py-5">
+                    {{event.about }}
+                </p>
+                </section>
+                <section class="p-5">
+                    <h1 class="text-2xl font-extrabold">
+                    Terms & Conditions
+                </h1>
+                <p class="text-md py-5">
+                    {{event.terms_and_conditions }}
+                </p>
+                </section>
+                <section class="p-5">
+                    <h1 class="text-2xl font-extrabold">
+                    Guidelines
+                </h1>
+                <p class="text-md py-5">
+                    {{event.guidelines }}
+                </p>
+                </section>
+            </div>
+            <div class="bg-white w-1/5 mx-5 h-content">
+                2
+            </div>
+        </div>
+
         
         </div>
         
@@ -36,6 +83,7 @@ import { ref } from 'vue';
 import { usePage, Inertia } from '@inertiajs/inertia';
 import { loadStripe } from '@stripe/stripe-js';
 import {  router,Link } from '@inertiajs/vue3';
+import Chip from 'primevue/chip';
 
 import Button from 'primevue/button';
 

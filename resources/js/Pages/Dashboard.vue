@@ -5,18 +5,48 @@
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
     </template>
     <div class="w-screen flex justify-center">
-      <div class="my-5 p-10 flex justify-between bg-secondary w-full max-w-3xl lg:max-w-5xl xl:max-w-7xl h-96 rounded-xl">
-            <Link href="dating" class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
-                DATING
+      <div class="my-5 p-10 flex flex-col md:flex-row justify-between items-center bg-secondary w-full max-w-3xl lg:max-w-5xl xl:max-w-7xl h-auto rounded-xl">
+            <Link 
+    href="/dating" 
+    class=" bg-blossomPink relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold overflow-hidden"
+>
+
+    <!-- Background Image -->
+    <img src="/images/dating.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out " />
+    
+    <!-- Overlay Text -->
+    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
+      <div class="">
+        <h1 class="text-2xl font-bold">DATING</h1>
+      </div>
+    </div>
+  
+</Link>
+            <Link href="/auth/events/page" class="bg-blossomPink  overflow-hidden relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
+                <!-- Background Image -->
+    <img src="/images/event.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out" />
+    
+    <!-- Overlay Text -->
+    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
+      <div>
+        <h1 class="text-2xl font-bold">EVENTS</h1>
+      </div>
+    </div>
             </Link>
-            <Link href="auth/events/page" class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
-                LIVE EVENTS
-            </Link>
-            <Link class="bg-blossomPink w-full m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold">
-                PRIVATE <br/> MATCHMAKING
+            <Link class="bg-blossomPink relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold">
+                <!-- Background Image -->
+    <img src="/images/matchmaking.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out" />
+    
+    <!-- Overlay Text -->
+    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
+      <div>
+        <h1 class="text-2xl font-bold">PRIVATE MATCHMAKING</h1>
+      </div>
+    </div>
             </Link>
         </div>
-    </div>
+        </div>
+
     
     <!-- <div v-for="ticket in tickets" :key="ticket.id" class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

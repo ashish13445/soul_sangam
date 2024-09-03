@@ -7,10 +7,14 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\UserPreferenceController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\StripeController;
-use App\Http\Controllers\LikeController;
+use App\Http\Controllers\RazorpayController;
+use App\Http\Controllers\ChatController;
+
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\Auth\CheckinController;
 use App\Http\Controllers\DatingController;
@@ -20,7 +24,7 @@ use App\Http\Middleware\CorsMiddleware;
 
 // Route::middleware([CorsMiddleware::class,])->group(function () {
     Route::middleware(['web'])->group(function () {
-        Route::post('/create-checkout-session', [StripeController::class, 'createCheckoutSession'])
+        Route::post('/create-checkout-session', [RazorpayController::class, 'createOrder'])
             ->middleware('auth.check')
             ->name('checkout');
     });
@@ -44,6 +48,8 @@ Route::post('/tickets', [TicketController::class, 'store']);
 Route::get('/purchase', [TicketController::class, 'purchase'])->name('purchase.ticket');
 Route::get('/tickets/get', [TicketController::class, 'getTickets']);
 Route::post('event/add',[EventController::class,'store'])->name('event.add');
+Route::patch('event/update/{id}',[EventController::class,'update'])->name('event.update');
+Route::delete('event/delete/{id}',[EventController::class,'destroy'])->name('event.delete');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -72,17 +78,16 @@ Route::get('/notifications', function () {
 
 Route::get('/notifications/{event_id}',[NotificationsController::class,'index']);
 Route::get('/eventDashboard',[CheckinController::class,'dashboard'])->middleware(['web','auth', 'verified','checkedin'])->name('eventDashboard');
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
 
 Route::get('event-profile', [UserController::class, 'create'])
 ->name('event.profile');
 
 Route::post('event-profile', [UserController::class, 'store']);
 Route::post('/profile/update-photo', [UserController::class, 'updateProfilePhoto']);
+Route::post('/profile/remove-photo', [UserController::class, 'removeProfilePhoto']);
+
+Route::post('/event/add-photo', [EventController::class, 'addPhoto']);
 
 
 Route::middleware(['web','auth', 'verified'])->group(function () {
@@ -93,7 +98,19 @@ Route::middleware(['web','auth', 'verified'])->group(function () {
     Route::get('dating/matches', [DatingController::class, 'matches'])->name('dating.matches');
     Route::get('/auth/events/{id}', [EventController::class, 'authShow'])->name('auth.event.get');
 Route::get('/auth/event/participants', [EventController::class, 'getParticipants'])->name('participants.get');
-Route::post('/like/like',[LikeController::class,'store'])->name('likeUser');
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::get('/profile/preference', [ProfileController::class, 'preference'])->name('profile.preference');
+Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+Route::get('/profile/help', [ProfileController::class, 'help'])->name('profile.help');
+
+Route::get('/user/preferences', [UserPreferenceController::class, 'show']);
+Route::patch('/user/preferences/update', [UserPreferenceController::class, 'update'])->name('preferences.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/like',[InteractionController::class,'like']);
+    Route::post('/skip',[InteractionController::class,'skip']);
+    Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::get('/messages', [ChatController::class, 'getMessages']);
 
 });
 

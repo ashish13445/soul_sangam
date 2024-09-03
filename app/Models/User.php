@@ -2,6 +2,13 @@
 
 namespace App\Models;
 use App\Models\Ticket;
+use App\Models\UserPreference;
+use App\Models\Like;
+use App\Models\Interaction;
+use App\Models\User;
+
+
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,10 +35,10 @@ class User extends Authenticatable
         'occupation',
         'education',
         'city',
-        'preference',
         'gender',
         'allow_dating',
-        'bio'
+        'bio',
+        'religion'
     ];
 
     /**
@@ -62,11 +69,34 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
+    public function preferences()
+    {
+        return $this->hasOne(UserPreference::class);
+    }
 
+    public function liked()
+    {
+        return $this->hasMany(Like::class, 'liked_user_id');
+    }
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'user_id');
+    }
     public function getProfilePhotoUrlAttribute()
     {
         return $this->profile_photo 
             ? asset('storage/profile_pictures/' . $this->profile_photo) 
             : asset('images/default.png'); // Default image if none is uploaded
     }
+
+    public function likedInteractions()
+{
+    return $this->hasMany(Interaction::class, 'interactable_id')
+                ->where('interactable_type', User::class)
+                ->where('type', 'like');
+}
+public function interactions()
+{
+    return $this->hasMany(Interaction::class, 'user_id');
+}
 }

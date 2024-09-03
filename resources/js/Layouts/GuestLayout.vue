@@ -1,13 +1,59 @@
 <script setup>
-import { ref } from 'vue';
+import { ref ,onMounted} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
+import Chip from 'primevue/chip';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import Dialog from 'primevue/dialog';
+import ChooseCity from '@/Components/ChooseCity.vue';
+const lat = ref();
+const long = ref();
+const location = ref('');
+const state = ref('');
 
+import Button from 'primevue/button';
+const getLocation = ()=>{
+    navigator.geolocation.getCurrentPosition(function(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+
+    lat.value = latitude;
+    long.value = longitude;
+    
+    // Use OpenStreetMap Nominatim API for reverse geocoding
+    var apiUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+    
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.display_name) {
+                var locationName = data.display_name;
+                location.value = locationName;
+                state.value = data.address.state;
+                console.log(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching location:', error);
+        });
+}
+, function (error) {
+                alert(error.code + ": " + error.message);
+            }, {
+                enableHighAccuracy: true,
+                maximumAge: 10000,
+                timeout: 5000
+            });
+}
+onMounted(getLocation)
+
+
+import { Link } from '@inertiajs/vue3';
+const visible= ref(false);
 const showingNavigationDropdown = ref(false);
+
 </script>
 
 <template>
@@ -26,13 +72,21 @@ const showingNavigationDropdown = ref(false);
                                     />
                                 </Link>
                             </div>
-
+                            
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('home')" :active="route().current('dashboard')">
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex justify-between w-screen max-w-5xl items-center">
+                                <NavLink :href="route('home')" :active="route().current('home')">
                                     Home
                                 </NavLink>
+                                <div class="">
+                                    <Chip :label="state" icon="pi pi-map-marker" @click="visible=true" class="cursor-pointer" />
+                                    <Dialog v-model:visible="visible" modal header="Choose City" :style="{ width: '25rem' }">
+            <ChooseCity/>
+        </Dialog>
+    </div>
+
                             </div>
+                            
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">

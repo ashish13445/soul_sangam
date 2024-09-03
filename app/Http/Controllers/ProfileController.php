@@ -20,11 +20,35 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $user->allow_dating = (bool) $user->allow_dating; // Convert 1/0 to true/false
-    
         return Inertia::render('Profile/Edit', [
             'user' => $user,
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
+        ]); 
+    }
+    public function preference(Request $request): Response
+    {
+        $user = $request->user();
+        $user->allow_dating = (bool) $user->allow_dating; // Convert 1/0 to true/false
+        return Inertia::render('Profile/Preference', [
+            'user' => $user,
+
+        ]); 
+    }
+    public function settings(Request $request): Response
+    {
+        $user = $request->user();
+        $user->allow_dating = (bool) $user->allow_dating; // Convert 1/0 to true/false
+        return Inertia::render('Profile/Settings', [
+            'user' => $user,
+
+        ]); 
+    }
+    public function help(): Response
+    {
+       // Convert 1/0 to true/false
+        return Inertia::render('Profile/Help', [
+            
         ]); 
     }
 
@@ -37,7 +61,7 @@ class ProfileController extends Controller
         $age = $dob->age;
 
         // Fill the user's information with validated data
-        $request->user()->fill($request->validated());
+        $request->user()->fill($request->all());
 
         // Update the user's age
         $request->user()->age = $age;

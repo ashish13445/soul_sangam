@@ -11,7 +11,7 @@ class RazorpayController extends Controller
 {
     public function createOrder(Request $request)
     {
-        $api = new Api('rzp_test_your_key', 'your_secret');
+        $api = new Api('rzp_test_2BFPuAnuz8ZT1a', 'jckc5pJUsEbi2uULD3qcyYM5');
 
         $eventId = $request->input('event_id');
         $event = Event::find($eventId);
@@ -35,13 +35,20 @@ class RazorpayController extends Controller
             'payment_capture' => 1 // Auto capture payment
         ]);
 
-        // Return the order ID and other necessary details to the frontend
-        return response()->json([
-            'order_id' => $order->id,
+        
+        $options = [
+            'key' => env('RAZORPAY_KEY'),
             'amount' => $order->amount,
             'currency' => $order->currency,
             'name' => $event->name,
-            'email' => $user->email
-        ]);
+            'description' => $event->name.' Ticket Purchase',
+            'order_id' => $order->id,
+            'user_email' => $user->email,
+            'theme' => [
+                'color' => '#3399cc',
+            ],
+        ];
+
+        return response()->json($options);
     }
 }

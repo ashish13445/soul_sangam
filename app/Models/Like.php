@@ -16,6 +16,7 @@ class Like extends Model
         'user_id',
         'liked_user_id',
         'event_id',
+        'type'
     ];
 
     public function user()

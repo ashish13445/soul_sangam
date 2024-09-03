@@ -7,6 +7,8 @@ import Button from 'primevue/button';
 
 import Chip from 'primevue/chip';
 
+import Card from 'primevue/card';
+
 const events = ref([]);
 const fetchEvents = ()=>{
     axios.get('/events')
@@ -28,10 +30,10 @@ function handleImageError() {
     <AuthenticatedLayout>
     <div class="w-screen flex justify-center">
 
-    <div class="grid grid-cols-2 grid-flow-row gap-2 w-full max-w-7xl bg-secondary  h-screen">
-        <div class="
-            bg-blossomPink flex flex-col justify-between items-center p-5 m-5 h-48 w-auto" v-for="event in events">
-        <h1 class="text-xl font-extrabold text-center">
+    <div class="grid grid-cols-1  md:grid-cols-3 grid-flow-row gap-0 w-full max-w-7xl bg-secondary ">
+         <div class="
+             flex flex-col justify-between items-center p-5  w-auto" v-for="event in events">
+       <!-- <h1 class="text-xl font-extrabold text-center">
             {{ event.name }}
         </h1>
         <section>
@@ -45,11 +47,39 @@ function handleImageError() {
         Event Details
     </button>
 </Link>
-            </div>
+            </div> -->
 
 
         <!-- <p class="bg-extralightblue text-md font-bold p-1 w-4">{{ event.start_date }} - {{ event.end_date }}</p> -->
-        </div>
+        <Card >
+        <template #header>
+            <img
+  alt="event image"
+  :src="`/storage/event/${event.event_image}`"
+  class="w-full h-40 object-cover"
+/>           </template>
+        <template #title>{{ event.name }}</template>
+        <template #subtitle>{{ event.start_date }} - {{event.end_date }}</template>
+        <template #content>
+            <p class="m-0">
+                <Chip :label="event.type" class="border-2 border-blue-600 text-blue-600"/>
+
+            </p>
+        </template>
+        <template #footer>
+            <div class="flex gap-4 mt-1">
+                <Link :href="`/auth/events/${event.id}`"> <Button label="Details" severity="secondary" outlined class="w-full" /> </Link>
+                <Link :href="`/auth/events/${event.id}`"> <Button label="Buy Ticket" class="w-full" /></Link>
+            </div>
+        </template>
+    </Card>
+
+    
+    
+    </div> 
+         
+
+    
     </div>
 </div>
     

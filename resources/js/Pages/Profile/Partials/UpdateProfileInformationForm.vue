@@ -5,7 +5,10 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import RadioButton from 'primevue/radiobutton';
     
+import Select from 'primevue/select';
+
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref} from 'vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -27,12 +30,13 @@ const form = useForm({
     occupation : user.occupation,
     education : user.education, 
     city: user.city,
-    preference: user.preference,
     allow_dating : user.allow_dating,
     gender: user.gender,
     bio: user.bio,
-    
+    religion: user.religion,
 });
+const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddhist','Jewish'])
+
 </script>
 
 <template>
@@ -76,6 +80,12 @@ const form = useForm({
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
+            <div class=" mt-2  items-center">
+                <InputLabel for="reigion" value="Religion" />
+  
+   <Select v-model="form.religion" :options="religions"  placeholder="Select a religion" class="w-full md:w-56" />
+
+</div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="text-sm mt-2 text-gray-800">
@@ -203,29 +213,9 @@ const form = useForm({
 
                 <InputError class="mt-2" :message="form.errors.bio" />
             </div>
+            
             <div class="mt-4">
-                <InputLabel for="preference" value="Preference" />
-
-                <div class="flex flex-wrap gap-4">
-
-    <div class="flex items-center mt-1">
-        <RadioButton v-model="form.preference" inputId="ingredient1" name="preference" value="Male" />
-        <label for="male" class="ml-2">Male</label>
-    </div>
-    <div class="flex items-center">
-        <RadioButton v-model="form.preference" inputId="ingredient2" name="preference" value="Female" />
-        <label for="female" class="ml-2">Female</label>
-    </div>
-    <div class="flex items-center">
-        <RadioButton v-model="form.preference" inputId="ingredient2" name="preference" value="Others" />
-        <label for="others" class="ml-2">Others</label>
-    </div>
-  
-</div>
-
-            </div>
-            <div class="mt-4">
-                <InputLabel for="preference" value="Allow Dating" />
+                <InputLabel for="allow_dating" value="Allow Dating" />
 
                 <div class="flex flex-wrap gap-4">
 

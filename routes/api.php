@@ -5,6 +5,10 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\StripeController;
 use App\Http\Middleware\CorsMiddleware;
+use App\Http\Controllers\UserPreferenceController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\InteractionController;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -79,9 +83,19 @@ use Illuminate\Support\Facades\Route;
         Route::get('dating/matches', [DatingController::class, 'matches']);
         Route::get('/auth/events/{id}', [EventController::class, 'authShow']);
     Route::get('/auth/event/participants', [EventController::class, 'getParticipants']);
-    Route::post('/like/like',[LikeController::class,'store']);
+    Route::post('/like',[InteractionController::class,'like']);
+    Route::post('/skip',[InteractionController::class,'skip']);
+
     
     });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/preferences', [UserPreferenceController::class, 'show']);
+    Route::patch('/user/preferences/update', [UserPreferenceController::class, 'update']);
+        Route::patch('/profile', [ProfileController::class, 'update']);
+        Route::delete('/profile', [ProfileController::class, 'destroy']);
+});
+
 
 // });
 

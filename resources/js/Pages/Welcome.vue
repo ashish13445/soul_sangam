@@ -31,8 +31,6 @@ function handleImageError() {
 <template>
     <Head title="Welcome" />
     <GuestLayout >
-        <
-
         <div class="my-5 p-10 flex flex-col md:flex-row justify-between items-center bg-secondary w-full max-w-3xl lg:max-w-5xl xl:max-w-7xl h-auto rounded-xl">
             <Link 
     href="dating" 
@@ -61,7 +59,7 @@ function handleImageError() {
       </div>
     </div>
             </Link>
-            <Link class="bg-blossomPink relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold">
+            <Link href="/events/page" class="bg-blossomPink  overflow-hidden relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
                 <!-- Background Image -->
     <img src="/images/matchmaking.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out" />
     

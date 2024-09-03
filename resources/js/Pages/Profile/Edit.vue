@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import UpdatePreference from './Partials/UpdatePreference.vue';
+
 import EventProfile from './Partials/EventProfile.vue';
 import ProfilePicture from '@/Components/ProfilePicture.vue';
 import { Head } from '@inertiajs/vue3';
@@ -18,41 +20,34 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Profile" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>
-        </template>
+       
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="py-12 w-screen md:px-8">
                 
                     
                 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg md:flex w-full justify-between">
-                 <div class="w-2/3">
-
+                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg md:flex w-full justify-between ">
+                 <div class="sm:w-2/3">
+                    <div class="block sm:hidden ">
+                        <ProfilePicture />
+                    </div>
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
                         class="max-w-xl"
                     />
                     </div>
-                    <div class="w-1/3">
+                    <div class="hidden  sm:block w-1/3">
                         <ProfilePicture />
                     </div>
                 </div>
                 
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
-
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
+              
+                
+                
             </div>
-        </div>
     </AuthenticatedLayout>
 </template>

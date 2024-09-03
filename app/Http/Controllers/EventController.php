@@ -3,9 +3,17 @@
 namespace App\Http\Controllers;
 use App\Models\Ticket;
 use App\Models\Event;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Inertia\Inertia;
+use Inertia\Response;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
@@ -26,6 +34,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $event = Event::create($request->all());
+        
         return response()->json([$event]);
     }
 
@@ -61,6 +70,42 @@ class EventController extends Controller
         })->pluck('user')->unique('id')->values()->toArray();
         
         return response()->json(['users'=>$users]);
+    }
+
+    public function addPhoto(Request $request)
+{
+    $request->validate([
+        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+    $imageName = time().'.'.$request->photo->extension();  
+
+    // Save the image to storage/app/public/event
+    $request->photo->storeAs('public/event', $imageName);
+
+    // Find the event and update the event_image column
+    $event = Event::find($request->id); // Replace with the actual event ID or logic to get the event
+    if ($event->event_image) {
+        Storage::delete('public/event/' . $event->event_image);
+    }
+    $event->event_image = $imageName;
+    $event->save();
+
+    return response()->json(['event_image' => $imageName]);
+}
+
+    public function destroy(string $id)
+    {
+        $event = Event::findOrFail($id);
+        $event->tickets()->delete();
+        $event->delete();
+        return response()->json("Event Deleted successfully");
+    }
+
+    public function update( string $id, Request $request,)
+    {
+        $event = Event::findOrFail($id);
+        $event->update($request->all());
+        return response()->json('Event Updated successfully');
     }
 
 }

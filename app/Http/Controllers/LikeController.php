@@ -30,35 +30,40 @@ class LikeController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   
      
         $user_id = Auth::id();
         $liked_user_id = $request->input('user_id');
-        $event_id = session('ticket')['event_id'];
-        
-        // Ensure user cannot like themselves
-        if ($user_id == $liked_user_id) {
-            return response()->json(['error' => 'You cannot like yourself.'], 400);
+        // $event_id = session('ticket')['event_id'];
+       
+        if($request->event_id) {
+            Like::create([
+                'user_id' => $user_id,
+                'liked_user_id' => $liked_user_id,
+                'event_id' => $request->event_id,
+                'type'=> 'event'
+            ]);
+        }
+        else{
+            Like::create([
+                'user_id' => $user_id,
+                'liked_user_id' => $liked_user_id,
+                'type'=> 'dating'
+            ]);
         }
 
-        // Check if like already exists
-        if (Like::where('user_id', $user_id)
-            ->where('liked_user_id', $liked_user_id)
-            ->where('event_id', $event_id)
-            ->exists()) {
-            return response()->json(['error' => 'You have already liked this user.'], 400);
-        }
-
-        Like::create([
-            'user_id' => $user_id,
-            'liked_user_id' => $liked_user_id,
-            'event_id' => $event_id,
-        ]);
         $liker = User::find($user_id);
     $likedUser = User::find($liked_user_id);
 
     // Notify the liked user
-    $likedUser->notify(new LikedUserNotification($liker, $likedUser,$event_id));
+    if($request->event_id){
+        $likedUser->notify(new LikedUserNotification($liker, $likedUser,$request->event_id));
+    }
+    else{
+        // $likedUser->notify(new LikedUserNotification($liker, $likedUser,null));
+        
+
+    }
 
 
         return response()->json(['message' => 'User liked successfully.']);

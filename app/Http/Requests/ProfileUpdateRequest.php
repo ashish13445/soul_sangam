@@ -22,7 +22,6 @@ class ProfileUpdateRequest extends FormRequest
             'city' => ['required', 'string'],
             'occupation'=>['required'],
             'education'=>['required'],
-            'preference' => ['required', 'string'],
             'bio' => ['required', 'string'],
             'allow_dating' => ['required', 'boolean'],
         ];

@@ -16,7 +16,11 @@ class Event extends Model
         'city',
         'start_date',
         'end_date',
-
+        'event_image',
+        'maps_location',
+        'about',
+        'terms_and_conditions',
+        'guidelines',
         'price'
     ];
 

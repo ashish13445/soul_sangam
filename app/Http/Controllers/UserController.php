@@ -45,7 +45,6 @@ class UserController extends Controller
         'occupation' => 'required|string|max:255',
         'education' => 'required|string|max:255',
         'city' => 'required|string|max:255',
-        'preference' => 'required|string|in:Male,Female',
         'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
@@ -63,7 +62,6 @@ class UserController extends Controller
         'occupation' => $request->occupation,
         'education' => $request->education,
         'city' => $request->city,
-        'preference' => $request->preference
     ];
 
     if ($request->hasFile('profile_picture')) {
@@ -116,24 +114,75 @@ class UserController extends Controller
     }
 
     public function updateProfilePhoto(Request $request)
-{
-    $request->validate([
-        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
-
-    $user = auth()->user();
-
-    // Delete the old profile photo if exists
-    if ($user->profile_picture) {
-        Storage::delete('public/profile_pictures/' . $user->profile_picture);
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'index' => 'required|integer|min:0', // Validate the index
+        ]);
+    
+        $user = auth()->user();
+        $index = $request->input('index');
+        
+        // Ensure profile_pictures is an array
+        $currentPictures = is_array($user->profile_pictures) 
+            ? $user->profile_pictures 
+            : json_decode($user->profile_pictures, true);
+    
+        // If decoding failed, initialize it as an empty array
+        if (!is_array($currentPictures)) {
+            $currentPictures = [];
+        }
+    
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '-' . $file->getClientOriginalName();
+            $file->storeAs('public/profile_pictures', $filename);
+    
+            // Replace the photo at the specific index, or add if the index does not exist
+            $currentPictures[$index] = $filename;
+        }
+    
+        // Save the updated pictures array to the user's profile_pictures field
+        $user->profile_pictures = json_encode($currentPictures);
+        $user->save();
+    
+        return response()->json(['profile_picture' => $currentPictures[$index]]);
     }
-    // Store the new profile photo
-    $fileName = time() . '.' . $request->photo->extension();
-    $request->photo->storeAs('public/profile_pictures', $fileName);
+    public function removeProfilePhoto(Request $request)
+    {
+        // Get the authenticated user
+        $user = Auth::user();
 
-    // Update user's profile photo path in the database
-    $user->profile_picture = $fileName ;
-    $user->save();
-    return response()->json(['profile_picture' => $user->profile_picture], 200);
-}
+        // Get the index of the photo to be removed
+        $index = $request->input('index');
+
+        // Get the current profile pictures array from the user
+        $profilePictures = json_decode($user->profile_pictures, true);
+
+        // Check if the index is valid and the picture exists
+        if (isset($profilePictures[$index])) {
+            // Remove the file from storage
+            $filePath = 'public/profile_pictures/' . $profilePictures[$index];
+            if (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+
+            // Remove the picture from the array
+            unset($profilePictures[$index]);
+
+            // Re-index the array to maintain consistency
+            $profilePictures = array_values($profilePictures);
+
+            // Update the user's profile_pictures column
+            $user->profile_pictures = json_encode($profilePictures);
+            $user->save();
+
+            return response()->json(['success' => true, 'message' => 'Profile picture removed successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid index or picture does not exist.'], 400);
+    }
+    
+
 }
