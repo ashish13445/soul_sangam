@@ -6,6 +6,8 @@ use App\Models\UserPreference;
 use App\Models\Like;
 use App\Models\Interaction;
 use App\Models\User;
+use App\Models\UserMatch;
+
 
 
 
@@ -98,5 +100,15 @@ class User extends Authenticatable
 public function interactions()
 {
     return $this->hasMany(Interaction::class, 'user_id');
+}
+
+public function matches()
+{
+    return $this->hasMany(UserMatch::class);
+}
+
+public function matchedByOthers()
+{
+    return $this->hasMany(UserMatch::class, 'matched_user_id');
 }
 }

@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col p-2 justify-center items-center">
-    <div class="w-full flex sm:flex-col sm:space-y-4 justify-center items-center">
+    <div class=" sm:flex justify-center items-center">
       <!-- Loop through the images array, which will always have 3 elements -->
-      <div v-for="(image, index) in profilePhotoUrls" :key="index" class="w-40 h-40 sm:w-48 sm:h-72 overflow-hidden relative">
+      <div v-for="(image, index) in profilePhotoUrls" :key="index" class="w-48 h-72 overflow-hidden ">
         <!-- Profile Picture or Placeholder -->
         <Image
           :src="image || '/images/profile_placeholder.jpg'"
           alt="Profile Picture"
-          class="w-auto h-24 sm:w-48 sm:h-48 object-cover"
+          class=" w-48 h-48 object-cover"
           preview
         />
 

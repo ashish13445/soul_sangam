@@ -48,7 +48,6 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
                 Update your account's profile information and email address.
             </p>
         </header>
-
         <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" value="Name" />

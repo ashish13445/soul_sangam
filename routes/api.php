@@ -9,6 +9,9 @@ use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\InteractionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationsController;
+
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -36,7 +39,8 @@ use Illuminate\Support\Facades\Route;
         Route::post('register', [RegisteredUserController::class, 'store']);
     
         Route::get('login', [AuthenticatedSessionController::class, 'create']);    
-    
+        Route::get('/events', [EventController::class, 'index']);
+        Route::get('/events/{id}', [EventController::class, 'event']);
         Route::post('login', [AuthenticatedSessionController::class, 'store']);
     
         Route::get('forgot-password', [PasswordResetLinkController::class, 'create']);
@@ -79,23 +83,24 @@ use Illuminate\Support\Facades\Route;
         Route::get('dating', [DatingController::class, 'index']);
         Route::get('dating/profiles', [DatingController::class, 'showProfiles']);
         Route::get('dating/profile/{id}', [ProfileController::class, 'show']);
-        Route::post('dating/match', [DatingController::class, 'match']);
-        Route::get('dating/matches', [DatingController::class, 'matches']);
+        Route::get('dating/matches', [InteractionController::class, 'getMatches']);
         Route::get('/auth/events/{id}', [EventController::class, 'authShow']);
     Route::get('/auth/event/participants', [EventController::class, 'getParticipants']);
     Route::post('/like',[InteractionController::class,'like']);
     Route::post('/skip',[InteractionController::class,'skip']);
-
+    Route::post('/profile/photo/update', [UserController::class, 'updateProfilePhoto']);
+    Route::post('/profile/photo/remove', [UserController::class, 'removeProfilePhoto']);
     
     });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/preferences', [UserPreferenceController::class, 'show']);
     Route::patch('/user/preferences/update', [UserPreferenceController::class, 'update']);
-        Route::patch('/profile', [ProfileController::class, 'update']);
-        Route::delete('/profile', [ProfileController::class, 'destroy']);
+    Route::patch('/profile', [ProfileController::class, 'updateApi']);
+            Route::delete('/profile', [ProfileController::class, 'destroy']);
+            Route::get('/notifications',[NotificationsController::class,'getNotifications']);
 });
 
-
+Route::get('/cities',[EventController::class,'getCities']);
 // });
 

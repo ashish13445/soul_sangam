@@ -1,86 +1,31 @@
 <template>
   <Head title="Dashboard" />
   <AuthenticatedLayout>
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
-    </template>
-    <div class="w-screen flex justify-center">
-      <div class="my-5 p-10 flex flex-col md:flex-row justify-between items-center bg-secondary w-full max-w-3xl lg:max-w-5xl xl:max-w-7xl h-auto rounded-xl">
-            <Link 
-    href="/dating" 
-    class=" bg-blossomPink relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold overflow-hidden"
->
+    <div class="h-1/3 sm:h-full flex items-center justify-center">
+        <img src="../../images/hero_images.png" class="lg:w-4/5"/>
+      </div>
+      <div class="bg-white h-auto p-10  lg::p-20 flex flex-col sm:flex-row justify-center items-center">
+        <h2 class="text-blossomPink tracking-wide text-center text-3xl sm:text-4xl lg:text-6xl font-bold sm:w-1/3">
+            Your journey to a lifetime of happiness starts here.
+        </h2>
+        <div class="text-center">
+            <img src="../../images/qr.png" class=" p-10 w-60"/>
+            <p class="text-lg">Download app now</p>
+        </div>
+      </div>
 
-    <!-- Background Image -->
-    <img src="/images/dating.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out " />
-    
-    <!-- Overlay Text -->
-    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
-      <div class="">
-        <h1 class="text-2xl font-bold">DATING</h1>
-      </div>
-    </div>
-  
-</Link>
-            <Link href="/auth/events/page" class="bg-blossomPink  overflow-hidden relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-2xl font-extrabold">
-                <!-- Background Image -->
-    <img src="/images/event.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out" />
-    
-    <!-- Overlay Text -->
-    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
-      <div>
-        <h1 class="text-2xl font-bold">EVENTS</h1>
-      </div>
-    </div>
-            </Link>
-            <Link class="bg-blossomPink relative w-full h-72 m-5 rounded-xl flex justify-center items-center text-center text-2xl font-extrabold">
-                <!-- Background Image -->
-    <img src="/images/matchmaking.jpg" alt="Background Image" class="w-full h-full object-cover brightness-50 group-hover:brightness-75 transition duration-300 ease-in-out" />
-    
-    <!-- Overlay Text -->
-    <div class="absolute inset-0 flex items-center justify-center text-center text-white">
-      <div>
-        <h1 class="text-2xl font-bold">PRIVATE MATCHMAKING</h1>
-      </div>
-    </div>
-            </Link>
-        </div>
-        </div>
-
-    
-    <!-- <div v-for="ticket in tickets" :key="ticket.id" class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-secondary overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="lg:flex justify-between">
-            <img src="../../images/soul.jpg" style="height: 240px;" class="w-full lg:w-auto">
-            <div class="p-4 px-20">
-              <h3 class="text-2xl font-extrabold text-blue-600 p-1">{{ ticket.event.name }}</h3>
-              <p class="p-1 font-bold">{{ new Date(ticket.event.start_date).toDateString() }} - {{ new Date(ticket.event.end_date).toDateString() }}</p>
-              <p class="p-1 font-bold">{{ ticket.event.city }}</p>
-              <p class="p-1 font-bold">₹ {{ ticket.event.price }}</p>
-              <p class="p-1 font-bold">{{ ticket.user.name }}</p>
-              <p class="p-1 font-bold">{{ ticket.user.email }}</p>
-            </div>
-            <div>
-              <div v-if="isEventLive(ticket.event)" class="bg-green-100 h-full px-5 flex flex-col justify-center items-center">
-                <h1 class="text-xl font-extrabold">LIVE</h1>
-                <p class="text-sm">Join by scanning the QR code</p>
-              </div>
-              <div v-else-if="isEventUpcoming(ticket.event)" class="bg-yellow-100 h-full w-40 flex flex-col justify-center items-center">
-                <p class="text-xl font-extrabold text-blue-800">{{ ticket.countdown }} Days Left </p>
-              </div>
-              <div v-else class="bg-extralightblue h-full px-5 flex flex-col justify-center items-center">
-                <h1 class="text-xl font-extrabold">Event Ended</h1>
-              </div>
-            </div>
-            <div class="flex flex-col items-center justify-center px-5">
-              <QrCodeGenerator :text="ticket.ticket_code"/>
-              <p>{{ ticket.ticket_code }}</p>
-            </div>
-          </div>                  
-        </div>
-      </div>
-    </div> -->
+      <div class="bg-custom-radial lg:p-60 flex flex-col justify-evenly items-center tracking-wide relative">
+    <img class="absolute z-0" src="../../images/elephants.png" />
+    <Link href="auth/events/page" class="bg-white rounded-lg w-1/3 my-4 hover:border-x-8 border-blossomPink z-10 relative" data-aos="fade-up" data-aos-duration="3000">
+        <h2 class="text-sm md:text-xl p-3 md:p-10 text-center text-secondary font-bold">LIVE EVENTS</h2>
+    </Link>
+    <Link class="bg-white rounded-lg w-1/3 my-4 z-10 relative hover:border-x-8 border-blossomPink" data-aos="fade-up" data-aos-duration="3000">
+        <h2 class="text-sm md:text-xl p-3 md:p-10 text-center text-secondary font-bold">PRIVATE <br/>MATCHMAKING</h2>
+    </Link>
+    <Link href="/dating" class="bg-white rounded-lg w-1/3 my-4 z-10 relative hover:border-x-8 border-blossomPink" data-aos="fade-up" data-aos-duration="3000">
+        <h2 class="text-sm md:text-xl p-3 md:p-10 text-center text-secondary font-bold">DATING</h2>
+    </Link>
+</div>
   </AuthenticatedLayout>
 </template>
 

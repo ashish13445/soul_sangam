@@ -1,5 +1,6 @@
 <template>
     <div class="w-full h-auto  ">
+        <Toast/>
         <div v-if="profile" class="bg-white border border-surface-200 dark:border-surface-700 rounded-lg m-2 sm:flex" data-aos="fade-right">
             <div class="p-0 w-full sm:w-2/3">
                 <Galleria 
@@ -88,6 +89,10 @@ import Galleria from 'primevue/galleria';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Tag from 'primevue/tag';
+import Toast from 'primevue/toast';
+
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
 
 const profile = ref(null);
 
@@ -108,8 +113,13 @@ const like = (userId) => {
     isAnimating.value = true;
 
     axios.post('/like', { user_id: userId })
-        .then(() => {
+        .then((res) => {
             getDatingProfile();
+            if (res.data.status === 'matched') {
+          toast.add({ severity: 'success', summary: 'It\'s a Match!', detail: 'You and the other user have liked each other!', life: 3000 });
+        } else {
+          toast.add({ severity: 'info', summary: 'Liked!', detail: 'You liked the user.', life: 3000 });
+        }
         })
         .catch((error) => {
             console.error('Error liking user:', error);

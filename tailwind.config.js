@@ -13,15 +13,22 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+                sans: ['Outfit', ...defaultTheme.fontFamily.sans],
             },
             colors:{
-                primary : '#cdb4db',
-                secondary: '#ffc8dd',
-                blossomPink: '#ffafcc',
+                primary : '#F5A2B0',
+                secondary: '#43C1BF',
+                blossomPink: '#D70A5F',
                 extralightblue: '#bde0fe',
                 lightblue: '#a2d2ff'
-            }
+            },
+            backgroundImage: {
+                'custom-radial': 'radial-gradient(circle, #43C1BF 60%, #205B5A 100%)',
+                'primary-radial': 'radial-gradient(circle, #F5A2B0 60%, #D70A5F 100%)',
+
+              },
+        
+
         },
     },
 

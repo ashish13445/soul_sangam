@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\CategoryController;
+
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\LikeController;
@@ -32,6 +34,7 @@ use App\Http\Middleware\CorsMiddleware;
 Route::get('/payment-success', [StripeController::class, 'paymentSuccess'])->name('payment.success');
 Route::get('/payment-cancel', [StripeController::class, 'paymentCancel'])->name('payment.cancel');
 
+Route::post('/verify-payment', [RazorpayController::class, 'verifyPayment']);
 
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/page', function () {
@@ -48,6 +51,9 @@ Route::post('/tickets', [TicketController::class, 'store']);
 Route::get('/purchase', [TicketController::class, 'purchase'])->name('purchase.ticket');
 Route::get('/tickets/get', [TicketController::class, 'getTickets']);
 Route::post('event/add',[EventController::class,'store'])->name('event.add');
+Route::post('category/add',[CategoryController::class,'store'])->name('category.add');
+Route::get('/categories',[CategoryController::class,'index'])->name('category.get');
+
 Route::patch('event/update/{id}',[EventController::class,'update'])->name('event.update');
 Route::delete('event/delete/{id}',[EventController::class,'destroy'])->name('event.delete');
 
@@ -84,8 +90,8 @@ Route::get('event-profile', [UserController::class, 'create'])
 ->name('event.profile');
 
 Route::post('event-profile', [UserController::class, 'store']);
-Route::post('/profile/update-photo', [UserController::class, 'updateProfilePhoto']);
-Route::post('/profile/remove-photo', [UserController::class, 'removeProfilePhoto']);
+    Route::post('/profile/update-photo', [UserController::class, 'updateProfilePhoto']);
+    Route::post('/profile/remove-photo', [UserController::class, 'removeProfilePhoto']);
 
 Route::post('/event/add-photo', [EventController::class, 'addPhoto']);
 
@@ -94,12 +100,11 @@ Route::middleware(['web','auth', 'verified'])->group(function () {
     Route::get('dating', [DatingController::class, 'index'])->name('dating.index');
     Route::get('dating/profiles', [DatingController::class, 'showProfiles'])->name('dating.show.profiles');
     Route::get('dating/profile/{id}', [ProfileController::class, 'show'])->name('dating.profile.show');
-    Route::post('dating/match', [DatingController::class, 'match'])->name('dating.match');
-    Route::get('dating/matches', [DatingController::class, 'matches'])->name('dating.matches');
     Route::get('/auth/events/{id}', [EventController::class, 'authShow'])->name('auth.event.get');
 Route::get('/auth/event/participants', [EventController::class, 'getParticipants'])->name('participants.get');
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::get('/profile/preference', [ProfileController::class, 'preference'])->name('profile.preference');
+Route::get('/profile/picture', [ProfileController::class, 'pictures'])->name('profile.pictures');
 Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
 Route::get('/profile/help', [ProfileController::class, 'help'])->name('profile.help');
 
@@ -111,6 +116,7 @@ Route::patch('/user/preferences/update', [UserPreferenceController::class, 'upda
     Route::post('/skip',[InteractionController::class,'skip']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::get('/messages', [ChatController::class, 'getMessages']);
+Route::get('/notifications', [NotificationsController::class, 'getNotifications']);
 
 });
 

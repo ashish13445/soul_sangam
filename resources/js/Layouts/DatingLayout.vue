@@ -86,7 +86,7 @@ const handleDockClick = (item) => {
         </div>
 
         <!-- Main content area -->
-        <div class="w-full h-screen flex flex-col bg-primary items-center justify-between">
+        <div class="w-full h-screen flex flex-col bg-primary-radial items-center justify-between">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="w-screen md:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -6,7 +6,14 @@
                 <div class="flex items-center">
                         
                 <button class="relative overflow-hidden w-full border-0 bg-transparent flex items-center pt-5 pl-4 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-none cursor-pointer transition-colors duration-200">
-                    <Avatar :image="firstImageUrl" class="mr-2" shape="circle" size="xlarge" />
+                        <Avatar v-if="firstImageUrl" :image="firstImageUrl" class="mr-2" shape="circle" size="xlarge" />
+                        <Avatar v-else class="" shape="circle" size="xlarge" />
+
+                        <Link :href="route('profile.pictures')" class="mr-3 mb-8">
+                        <i class="pi pi-pencil"></i>
+                        </Link>
+                    
+
                     <span class="inline-flex flex-col items-start">
                         <span class="text-xl font-bold">{{ $page.props.auth.user.name }}</span>
                         <span class="text-sm pl-1">member</span>
@@ -89,7 +96,6 @@ const items = ref([
 ]);
 const firstImageUrl = computed(() => {
   const profilePictures = JSON.parse(page.props.auth.user.profile_pictures);
-  console.log(profilePictures[0]);
   return profilePictures && profilePictures.length > 0 
     ? `/storage/profile_pictures/${profilePictures[0]}` 
     : ''; // Fallback if no images are available

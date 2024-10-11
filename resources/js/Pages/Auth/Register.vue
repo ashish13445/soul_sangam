@@ -5,6 +5,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import Dialog from 'primevue/dialog';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { ref } from 'vue';
 
 const form = useForm({
     name: '',
@@ -13,6 +16,7 @@ const form = useForm({
     password: '',
     password_confirmation: '',
 });
+const visible = ref(true);
 
 const submit = () => {
     form.post(route('register'), {
@@ -24,8 +28,19 @@ const submit = () => {
 <template>
     <GuestLayout>
         <Head title="Register" />
-
-        <form @submit.prevent="submit" class="md:w-1/2 p-10 w-content mt-6 bg-white">
+        <Dialog v-model:visible="visible" modal   >
+            
+            <template #container="{ closeCallback }">
+                <div class="sm:flex  sm:p-0">
+                    
+                <div class="flex items-center bg-primary" >
+                    <ApplicationLogo/>
+                  </div>  
+        <form @submit.prevent="submit" class="p-10  bg-white rounded  ">
+            <Link :href="route('home')"><i class="pi pi-home text-red-800" ></i></Link>
+            <h1 class="text-xl text-center">
+                Sign Up
+            </h1>
             <div>
                 <InputLabel for="name" value="Name" />
 
@@ -114,5 +129,8 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
+        </div>
+        </template>
+        </Dialog>
     </GuestLayout>
 </template>

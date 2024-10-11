@@ -114,41 +114,53 @@ class UserController extends Controller
     }
 
     public function updateProfilePhoto(Request $request)
-    {
-        $request->validate([
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'index' => 'required|integer|min:0', // Validate the index
-        ]);
-    
-        $user = auth()->user();
-        $index = $request->input('index');
-        
-        // Ensure profile_pictures is an array
-        $currentPictures = is_array($user->profile_pictures) 
-            ? $user->profile_pictures 
-            : json_decode($user->profile_pictures, true);
-    
-        // If decoding failed, initialize it as an empty array
-        if (!is_array($currentPictures)) {
-            $currentPictures = [];
-        }
-    
-        // Handle file upload
-        if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filename = time() . '-' . $file->getClientOriginalName();
-            $file->storeAs('public/profile_pictures', $filename);
-    
-            // Replace the photo at the specific index, or add if the index does not exist
-            $currentPictures[$index] = $filename;
-        }
-    
-        // Save the updated pictures array to the user's profile_pictures field
-        $user->profile_pictures = json_encode($currentPictures);
-        $user->save();
-    
-        return response()->json(['profile_picture' => $currentPictures[$index]]);
+{
+    // Validate the input
+    $request->validate([
+        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'index' => 'required|integer|min:0', // Validate the index
+    ]);
+
+    $user = auth()->user();
+    $index = $request->input('index');
+
+    // Ensure profile_pictures is an array
+    $currentPictures = is_array($user->profile_pictures) 
+        ? $user->profile_pictures 
+        : json_decode($user->profile_pictures, true);
+
+    // If decoding failed, initialize it as an empty array
+    if (!is_array($currentPictures)) {
+        $currentPictures = [];
     }
+
+    // Check if the index already has a photo and delete it from the server
+    if (isset($currentPictures[$index]) && !empty($currentPictures[$index])) {
+        $existingPhotoPath = storage_path('app/public/profile_pictures/' . $currentPictures[$index]);
+        
+        // Delete the file if it exists
+        if (file_exists($existingPhotoPath)) {
+            unlink($existingPhotoPath);
+        }
+    }
+
+    // Handle file upload
+    if ($request->hasFile('photo')) {
+        $file = $request->file('photo');
+        $filename = time() . '-' . $file->getClientOriginalName();
+        $file->storeAs('public/profile_pictures', $filename);
+
+        // Replace the photo at the specific index, or add if the index does not exist
+        $currentPictures[$index] = $filename;
+    }
+
+    // Save the updated pictures array to the user's profile_pictures field
+    $user->profile_pictures = json_encode($currentPictures);
+    $user->save();
+
+    return response()->json(['profile_picture' => $currentPictures[$index]]);
+}
+
     public function removeProfilePhoto(Request $request)
     {
         // Get the authenticated user

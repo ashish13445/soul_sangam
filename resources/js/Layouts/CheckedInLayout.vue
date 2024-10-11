@@ -10,39 +10,38 @@ const page = usePage();
 const notifications = ref([]);
 const count = ref(0);
 const showingNavigationDropdown = ref(false);
-const fetchNotifications = async () => {
-  try {
+// const fetchNotifications = async () => {
+//   try {
    
-    const response = await axios.get(`/notifications/${page.props.ticket.event_id}`);
-    notifications.value = response.data.notifications;
-    count.value = notifications.value.length;
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-  }
-};
+//     const response = await axios.get(`/notifications/${page.props.ticket.event_id}`);
+//     notifications.value = response.data.notifications;
+//     count.value = notifications.value.length;
+//   } catch (error) {
+//     console.error('Error fetching notifications:', error);
+//   }
+// };
 
-const pollingInterval = 20000; 
-let pollingTimer;
+// const pollingInterval = 20000; 
+// let pollingTimer;
 
-const startPolling = () => {
-  pollingTimer = setInterval(fetchNotifications, pollingInterval);
-};
+// const startPolling = () => {
+//   pollingTimer = setInterval(fetchNotifications, pollingInterval);
+// };
 
-const stopPolling = () => {
-  clearInterval(pollingTimer);
-};
+// const stopPolling = () => {
+//   clearInterval(pollingTimer);
+// };
 
-onMounted(() => {
-  fetchNotifications(); 
-  startPolling(); 
-});
+// onMounted(() => {
+//   fetchNotifications(); 
+//   startPolling(); 
+// });
 
-onUnmounted(stopPolling);
+// onUnmounted(stopPolling);
 
 </script>
 
 <template>
-{{ $page }}
 
     <div>
         <div class="min-h-screen bg-gray-100">
@@ -67,11 +66,11 @@ onUnmounted(stopPolling);
                                 <NavLink :href="route('eventDashboard')" :active="route().current('eventDashboard')">
                                     Event Dashboard
                                 </NavLink>
-                                <NavLink :href="route('notifications')" :active="route().current('notifications')">
+                                <!-- <NavLink :href="route('notifications')" :active="route().current('notifications')">
                                     <span><i class="pi pi-heart-fill" style="font-size:1.5rem;"></i></span>
                                     <span v-if="count > 0" class="bg-red-500 text-white rounded-full px-2 " style="margin-left: -7px;margin-bottom: 19px;">{{ count }}</span>
 
-                                </NavLink>
+                                </NavLink> -->
                             </div>
                             
                         </div>
@@ -117,10 +116,10 @@ onUnmounted(stopPolling);
                         
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
-                            <NavLink :href="route('notifications')" :active="route().current('notifications')">
+                            <!-- <NavLink :href="route('notifications')" :active="route().current('notifications')">
                                 <span class="pt-2 mr-3"><i class="pi pi-heart-fill" style="font-size: 1.5rem;"></i></span>
 
-                            </NavLink>
+                            </NavLink> -->
 
                             <button
                                 @click="showingNavigationDropdown = !showingNavigationDropdown"
@@ -191,7 +190,7 @@ onUnmounted(stopPolling);
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="bg-primary-radial">
                 <slot />
             </main>
         </div>

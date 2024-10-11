@@ -6,7 +6,6 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import UpdatePreference from './Partials/UpdatePreference.vue';
 
 import EventProfile from './Partials/EventProfile.vue';
-import ProfilePicture from '@/Components/ProfilePicture.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -24,23 +23,19 @@ defineProps({
     <AuthenticatedLayout>
        
 
-        <div class="py-12 w-screen md:px-8">
+        <div class="py-12 w-screen md:px-8 bg-primary-radial">
                 
-                    
-                
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg md:flex w-full justify-between ">
-                 <div class="sm:w-2/3">
-                    <div class="block sm:hidden ">
-                        <ProfilePicture />
-                    </div>
+                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg md:flex w-full ">
+                 <div class="">
+                   
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
-                        class="max-w-xl"
+                        class=""
                     />
                     </div>
-                    <div class="hidden  sm:block w-1/3">
-                        <ProfilePicture />
+                    <div class="">
+                        <!-- <ProfilePicture /> -->
                     </div>
                 </div>
                 

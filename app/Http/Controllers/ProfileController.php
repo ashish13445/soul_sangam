@@ -35,6 +35,14 @@ class ProfileController extends Controller
 
         ]); 
     }
+    public function pictures(Request $request): Response
+    {
+        $user = $request->user();
+        return Inertia::render('Profile/UpdateProfilePicture', [
+            'user' => $user,
+
+        ]); 
+    }
     public function settings(Request $request): Response
     {
         $user = $request->user();
@@ -51,15 +59,16 @@ class ProfileController extends Controller
             
         ]); 
     }
-
+   
     /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
+    {   
+        
         $dob = Carbon::parse($request->input('dob'));
         $age = $dob->age;
-
+        
         // Fill the user's information with validated data
         $request->user()->fill($request->all());
 
@@ -70,6 +79,7 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+        
 
         // Save the updated user data
         $request->user()->save();
@@ -77,6 +87,32 @@ class ProfileController extends Controller
         // Redirect back to the profile edit page
         return Redirect::route('profile.edit');
 
+    }
+    public function updateApi(Request $request)
+    {
+        $dob = Carbon::parse($request->input('dob'));
+        $age = $dob->age;
+    
+        // Fill the user's information with validated data
+        $request->user()->fill($request->all());
+    
+        // Update the user's age
+        $request->user()->age = $age;
+    
+        // If the email has been changed, reset email verification
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+        }
+    
+        // Save the updated user data
+        $request->user()->save();
+    
+        // Respond with the updated user data in JSON format
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+            'user' => $request->user()
+        ]);
     }
 
     /**

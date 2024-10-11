@@ -8,12 +8,27 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Avatar from 'primevue/avatar';
+import Chip from 'primevue/chip';
 
 import { Link,usePage } from '@inertiajs/vue3';
 import CheckInModal from '@/Pages/Auth/CheckInModal.vue';
 const page = usePage();
 const showModal = ref(false); // State to control modal visibility
+import Dialog from 'primevue/dialog';
+import ChooseCity from '@/Components/ChooseCity.vue';
+const lat = ref();
+const long = ref();
+const location = ref('');
 
+import { useCityStore } from '@/stores/cityStore';
+const visible= ref(false);
+
+// Store
+const cityStore = useCityStore();
+if(!cityStore.selectedCity && page.url == '/auth/events/page'){
+    
+    visible.value = true;
+}
     const openModal = () => {
         showModal.value = true;
     }
@@ -24,7 +39,6 @@ const showModal = ref(false); // State to control modal visibility
 const showingNavigationDropdown = ref(false);
 const firstImageUrl = computed(() => {
   const profilePictures = JSON.parse(page.props.auth.user.profile_pictures);
-  console.log(profilePictures[0]);
   return profilePictures && profilePictures.length > 0 
     ? `/storage/profile_pictures/${profilePictures[0]}` 
     : ''; // Fallback if no images are available
@@ -49,58 +63,88 @@ const toggleSidebar = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <!-- <Link :href="route('dashboard')">
                                     <ApplicationLogo
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
-                                </Link>
+                                </Link> -->
                                 
                             </div>
                             
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                            <div class=" w-full hidden sm:flex items-center justify-between">
+                                <div class=" space-x-8 sm:-my-px sm:ms-10">
+                                    <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                    HOME
                                 </NavLink>
-                                <NavLink :href="route('auth.events.page')" :active="route().current('auth.events.page')">
-                                    Live Events
+                                <NavLink :href="route('home')" :active="route().current('about')">
+                                    ABOUT US
                                 </NavLink>
-                                <NavLink :href="route('dating.index')" :active="route().current('dating.index')">
-                                    Dating
+                                <NavLink :href="route('home')" :active="route().current('services')">
+                                    SERVICES
                                 </NavLink>
+                                </div>
+                                
+                                
                             </div>
                             
                         </div>
                         
                         
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <div class="">
+                                    <Chip :label="cityStore.selectedCity" icon="pi pi-map-marker" @click="visible=true" class="cursor-pointer" />
+                                    <Dialog v-model:visible="visible" modal header="Choose City" :style="{ width: '25rem' }">
+            <ChooseCity/>
+        </Dialog>
+    </div>
                             <div class="flex items-center">
                                 <button @click="openModal" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                     CheckIn
                 </button>
+
                         </div>
                             <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                
-                                <Avatar 
+                            <div class="ms-3 relative flex">
+                                <section v-if="firstImageUrl">
+                                    <Avatar 
                                 @click="toggleSidebar"
                                     :image="firstImageUrl" 
                                     class="mr-2 cursor-pointer" 
                                     shape="circle" 
                                     
                                 />
+                                </section>
+                                <section v-else>
+                                    <Avatar  class="mr-2 cursor-pointer"
+                                    @click="toggleSidebar"
+                                    shape="circle"
+
+                                    />
+                                </section>
+                                
                             </div>
                         </div>
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
-                            <Avatar 
+                        
+                            <section v-if="firstImageUrl">
+                                    <Avatar 
                                 @click="toggleSidebar"
                                     :image="firstImageUrl" 
                                     class="mr-2 cursor-pointer" 
                                     shape="circle" 
                                     
                                 />
+                                </section>
+                                <section v-else>
+                                    <Avatar  class="mr-2 cursor-pointer"
+                                    @click="toggleSidebar"
+                                    shape="circle"
+
+                                    />
+                                </section>
                         </div>
                     </div>
                 </div>
@@ -140,7 +184,7 @@ const toggleSidebar = () => {
             
 
             <!-- Page Content -->
-            <main class="w-full flex justify-between">
+            <main class=" h-screen bg-primary sm:bg-primary-radial">
                 
                     <slot />
 

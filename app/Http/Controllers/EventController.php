@@ -17,10 +17,50 @@ use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Event::with('tickets')->get();
+        if(auth()->user()){
+            if (auth()->user()->email === 'admin@gmail.com') {
+                return $this->indexForAdmin();
+            } else {
+                return $this->indexForUsers();
+            }
+        }
+        else{
+            return $this->indexForUsers();
+
+        }
+        // Check if the authenticated user is admin
+        
     }
+
+    // Function for admin to show events
+    private function indexForAdmin()
+    {
+        // Logic for admin, show all events or specific admin logic
+        return Event::with('tickets')->get();
+
+    }
+
+    // Function for regular users to show events
+    private function indexForUsers()
+    {
+        // Logic for regular users, show only certain events or specific user logic
+        $today = Carbon::today();
+        return Event::with('tickets')
+        ->whereDate('start_date', '<=', $today)
+        ->whereDate('end_date', '>=', $today)
+        ->get();
+    }
+    public function event($id)
+    {
+        $event = Event::findOrFail($id);
+
+        return response()->json($event);
+ 
+    }
+
+
 
     public function show($id)
     {
@@ -108,4 +148,12 @@ class EventController extends Controller
         return response()->json('Event Updated successfully');
     }
 
+    public function getCities()
+{
+    // Retrieve all unique cities from the events table
+    $cities = Event::select('city')->distinct()->pluck('city');
+
+    // Return the cities as an array
+    return response()->json($cities);
+}
 }

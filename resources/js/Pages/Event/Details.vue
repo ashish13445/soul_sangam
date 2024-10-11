@@ -1,9 +1,9 @@
 <template>
     
     <GuestLayout>
-
+<div class="w-full flex justify-center bg-primary-radial">
     <div v-if="event" class=" max-w-7xl w-full text-black flex flex-col items-center">
-        <div class="bg-white rounded mt-10 w-2/3" >
+        <div class="bg-white rounded sm:mt-10 w-full sm:w-2/3" >
             <img
   alt="event image"
   :src="`/storage/event/${event.event_image}`"
@@ -37,20 +37,9 @@
         </div>
     </div>
         </div>
-        <div class=' w-full mt-5 flex'>
-            <div class="bg-white rounded-lg w-1/5 mx-5 p-5 h-content">
-1
-            </div>
-            <div class="bg-white rounded-lg w-3/5 mx-5 p-5 h-content">
-                <section class="p-5">
-                    <h1 class="text-2xl font-extrabold">
-                    About
-                </h1>
-                <p class="text-md py-5">
-                    {{event.about }}
-                </p>
-                </section>
-                <section class="p-5">
+        <div class='w-full mt-5 sm:flex'>
+            <div class="bg-white rounded-lg sm:w-2/5 m-5 p-5 h-content ">
+<section class="p-5">
                     <h1 class="text-2xl font-extrabold">
                     Terms & Conditions
                 </h1>
@@ -66,14 +55,32 @@
                     {{event.guidelines }}
                 </p>
                 </section>
+                
             </div>
-            <div class="bg-white w-1/5 mx-5 h-content">
-                2
+            <div class="bg-white rounded-lg sm:w-3/5 m-5 sm:p-5 h-content overflow-hidden">
+                <section class="p-5">
+                    <h1 class="text-2xl font-extrabold">
+                    About
+                </h1>
+                <p class="text-md py-5">
+                    {{event.about }}
+                </p>
+                </section>
+                
+               
+                <div v-if="event.maps_location" class="  md:flex justify-center w-auto  mt-4" v-html="event.maps_location">
+
             </div>
+  
+              
+            </div>
+            
         </div>
 
         
         </div>
+    
+</div>
         
     </GuestLayout>
 </template>
@@ -138,3 +145,6 @@ const submit = async () => {
 };
 
 </script>
+<style scoped>
+
+</style>

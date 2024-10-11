@@ -1,14 +1,17 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import Popover from 'primevue/popover';
 
-
-import { onMounted,ref } from 'vue';
-import Image from 'primevue/image';
+import { onMounted,ref ,computed} from 'vue';
 
 import Button from 'primevue/button';
-
+import {useCityStore} from '@/stores/cityStore';
+const cityStore = useCityStore();
 import Chip from 'primevue/chip';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
 
 import Card from 'primevue/card';
 const visible = ref(true);
@@ -26,20 +29,157 @@ function handleImageError() {
     document.getElementById('docs-card-content')?.classList.add('!flex-row');
     document.getElementById('background')?.classList.add('!hidden');
 }
+
+const op = ref();
+const da = ref();
+const selectedFilter = ref(null);
+const filters = ref([]);
+
+const toggle = (event) => {
+    op.value.toggle(event);
+}
+const toggleDates = (event) => {
+    da.value.toggle(event);
+}
+const selectFilter = (member) => {
+    selectedFilter.value = member;
+    op.value.hide();
+}
+
+const fetchFilters = ()=>{
+     axios.get('/categories').then((res)=>{
+        filters.value = res.data;
+     });
+
+}
+onMounted(fetchFilters);
+const searchQuery = ref('');
+const filteredEvents = computed(() => {
+    let filtered = events.value;
+
+// Filter by selected category
+if (selectedFilter.value) {
+  filtered = filtered.filter(
+    (event) => event.category_id === selectedFilter.value.id
+  );
+}
+  if (cityStore.selectedCity) {
+    filtered = filtered.filter(
+      (event) => event.city === cityStore.selectedCity
+    );
+
+    // If no events match the selected city, fallback to events in the selected state
+    if (filtered.length === 0 && cityStore.selectedState) {
+      filtered = events.value.filter(
+        (event) => event.state === cityStore.selectedState
+      );
+    }
+  } else if (cityStore.selectedState) {
+    // If no city is selected but a state is, filter by state
+    filtered = filtered.filter(
+      (event) => event.state === cityStore.selectedState
+    );
+  }
+
+// Filter by search query
+if (searchQuery.value.trim() !== '') {
+  filtered = filtered.filter((event) =>
+    event.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+}
+
+return filtered;
+});
+const removeFilter = () => {
+    selectedFilter.value = null; // Clear the selected filter name
+};
+const selectedSortOption = ref('');
+
+const sortEvents = () => {
+  if (selectedSortOption.value === 'name') {
+    events.value.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (selectedSortOption.value === 'date') {
+    events.value.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+  } 
+};
+
+
 </script>
 
 <template>
-    <Head title="" />
+    <Head title="Events" />
     <GuestLayout>
         
     
+        <div class=" w-screen h-auto bg-primary-radial  flex  p-10 sm:pb-10 justify-evenly ">
+           <img src="../../../images/decoration.png" class="hidden sm:flex sm:w-40 lg:w-80"/>
+           <div class="flex flex-col justify-center items-center">
+            <h1 class="text-5xl font-extrabold text-white ">Discover Upcoming Events</h1>
+            <p class="text-xl text-white py-8">Find the best events in your area and get tickets now.</p>
+            <IconField class="w-full lg:w-1/2">
+    <InputIcon class="pi pi-search " style="color: white ; font-weight: bold;"/>
+    <InputText
+  v-model="searchQuery"
+  placeholder="Search"
+  class="w-full bg-black text-white custom-input border border-transparent focus:border-white focus:ring-2 focus:ring-white p-2 rounded"
+  /></IconField>
+           </div>
+           <img src="../../../images/decoration.png" class="hidden sm:flex sm:w-40 lg:w-80"/>
 
+            
+        </div>
+        
 
-    <div class="w-screen flex justify-center">
+        <div class="bg-white w-screen flex justify-center p-5">
+            <div class="w-full max-w-7xl flex justify-between">
+                <div>
+                    <Button label="Filters" class="text-sm md:text-sm "icon="pi pi-filter" severity="contrast" text outlined @click="toggle" />
+                    <Popover ref="op">
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                <ul class="list-none p-0 m-0 flex flex-col">
+                                    <li v-for="filter in filters" :key="filter.name" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border" @click="selectFilter(filter)" >
+                                        <div>
+                                            <span class="font-medium " >{{ filter.name }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </Popover>
 
-    <div class="grid grid-cols-1  md:grid-cols-3 grid-flow-row gap-0 w-full max-w-7xl bg-secondary ">
+                    <select v-model="selectedSortOption" @change="sortEvents" class=" mx-5 text-sm md:text-md rounded border border-black ">
+                        <option value="">Sort By</option>
+            <option value="name">Sort by Name</option>
+            <option value="date">Sort by Date</option>
+          </select> 
+                </div>
+                
+                <Button label="All Dates" class="sm:mx-5" icon="pi pi-calendar" severity="contrast" text outlined  @click="toggleDates"/>
+                <Popover ref="da">
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                
+                            </div>
+                        </div>
+                    </Popover>
+
+            </div>
+         
+        </div>
+     
+<div class="w-screen flex justify-center">
+    <p class="bg-white w-full max-w-7xl">
+        <div v-if="selectedFilter" class="w-full flex  py-3">
+            <Chip removable @remove="removeFilter">{{ selectedFilter.name }}</Chip>
+        </div>         </p>
+</div>
+    <div class="w-screen flex justify-center bg-white">
+        
+
+    <div class="grid grid-cols-1  md:grid-cols-3 grid-flow-row gap-0 w-full max-w-7xl  ">
          <div class="
-             flex flex-col justify-between items-center p-5  w-auto" v-for="event in events">
+             flex flex-col justify-between items-center p-5  w-auto" v-for="event in filteredEvents">
        
         <Card >
         <template #header>
@@ -74,3 +214,11 @@ function handleImageError() {
     
     </GuestLayout>
 </template>
+<style scoped>
+.p-inputtext{
+    background-color: #F5A2B0;
+    border-radius: 100px;
+    border:none;
+} 
+
+</style>

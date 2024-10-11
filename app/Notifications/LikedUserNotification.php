@@ -25,7 +25,7 @@ class LikedUserNotification extends Notification
      * @param User $liker The user who liked someone.
      * @param User $likedUser The user who was liked.
      */
-    public function __construct(User $liker, User $likedUser,int $event_id)
+    public function __construct(User $liker, User $likedUser,?int $event_id = null)
     {
         $this->liker = $liker;
         $this->likedUser = $likedUser;

@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div class="w-screen py-12 px-8">
+        <div class=" py-12 px-8">
             <UpdatePasswordForm/>
     
         </div>

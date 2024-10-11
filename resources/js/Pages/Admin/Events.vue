@@ -1,10 +1,28 @@
 <template>
     <header class="flex items-center ">
-    <h5 class="font-extrabold p-2">
-    Events     <button @click="openAddEventModal"><i class="pi pi-calendar-plus mx-5" style="font-size: 20px ;font-weight: bold; color: blue;"></i></button>
-
+    <h5 class=" px-4">
+    Events    
+     <button @click="openAddEventModal"><i class="pi pi-calendar-plus mx-5" style="font-size: 20px ;font-weight: bold; color: blue;"></i></button>
+     <Button  @click="openAddCategoryModal" label="categories" class="mx-5" icon="pi pi-box" size="small" severity="contrast" text outlined />
     </h5>
     </header>
+    <Modal :show="isAddCategoryModalOpen" @close="closeAddCategoryModal" >
+      <div class="p-5">
+        <span class="close" @click="closeAddCategoryModal"><i class="material-icons" style="cursor: pointer;">close</i></span>
+        <InputLabel for="category" value="Name" class="mt-5" />
+        <TextInput
+                    id="category"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="category"
+                    required
+                    autofocus
+                    autocomplete="category"
+                />
+                <Button @click="addCategory" label="Save" class="my-5" icon="pi pi-check" :loading="loading" severity="contrast"/>
+
+      </div>
+        </Modal>
     <Modal :show="isAddEventModalOpen" @close="closeAddEventModal" >
       <div class="p-5">
         <span class="close" @click="closeAddEventModal"><i class="material-icons" style="cursor: pointer;">close</i></span>
@@ -74,21 +92,20 @@
               </div>
                 
             </div>
+            
             <div class="p-1">
                 <InputLabel for="city" value="City" />
+                <select v-model="cityStore.selectedCity">
+      <option v-for="city in cityStore.cities" :key="city" :value="city">{{ city }}</option>
+      <option value="other">Other (Add New City)</option>
+    </select>
 
-                <TextInput
-                    id="city"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="eventForm.city"
-                    required
-                    autofocus
-                    autocomplete="city"
-                />
-
-                <InputError class="mt-2" :message="eventForm.errors.city" />
-            </div>
+    <!-- Input field appears if "Other" is selected -->
+    <div v-if="cityStore.selectedCity === 'other'">
+      <input type="text" v-model="newCity" placeholder="Enter your city" />
+      <button @click="addNewCity" class="bg-primary m-1 p-2">Add City</button>
+    </div>
+              </div>
             <div class="p-1">
                 <InputLabel for="maps_location" value="Maps Location" />
 
@@ -97,13 +114,37 @@
                     type="text"
                     class="mt-1 block w-full"
                     v-model="eventForm.maps_location"
-                    required
+                    
                     autofocus
                     autocomplete="maps_location"
                 />
 
                 <InputError class="mt-2" :message="eventForm.errors.maps_location" />
             </div>
+            <div class="p-1">
+                <InputLabel for="location" value="Location" />
+
+                <TextInput
+                    id="location"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="eventForm.location"
+                    required
+                    autofocus
+                    autocomplete="location"
+                />
+
+                <InputError class="mt-2" :message="eventForm.errors.maps_location" />
+            </div>
+            <div class="p-1">
+                <InputLabel for="eventForm.category_id" value="Category" />
+                <Select v-model="eventForm.category_id" :options="categories" optionLabel="name" optionValue="id" placeholder="choose category" class="w-full md:w-56 mt-1" />
+
+                
+
+                <InputError class="mt-2" :message="eventForm.errors.category" />
+            </div>
+            
             <div class="p-1">
                 <InputLabel for="price" value="Price" />
                 <InputGroup>
@@ -202,6 +243,14 @@
                 <InputError class="mt-2" :message="eventForm.errors.name" />
             </div>
             <div class="p-1">
+                <InputLabel for="eventForm.category_id" value="Category" />
+                <Select v-model="eventForm.category_id" :options="categories" optionLabel="name" optionValue="id" placeholder="choose category" class="w-full md:w-56 mt-1" />
+
+                
+
+                <InputError class="mt-2" :message="eventForm.errors.category" />
+            </div>
+            <div class="p-1">
                 <InputLabel for="type" value="Type" />
 
                 <div class="flex flex-wrap gap-4 mt-1">
@@ -253,30 +302,45 @@
             </div>
             <div class="p-1">
                 <InputLabel for="city" value="City" />
+                <select v-model="cityStore.selectedCity">
+      <option v-for="city in cityStore.cities" :key="city" :value="city">{{ city }}</option>
+      <option value="other">Other (Add New City)</option>
+    </select>
 
-                <TextInput
-                    id="city"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="eventForm.city"
-                    required
-                    autofocus
-                    autocomplete="city"
-                />
+    <!-- Input field appears if "Other" is selected -->
+    <div v-if="cityStore.selectedCity === 'other'">
+      <input type="text" v-model="newCity" placeholder="Enter your city" />
+      <button @click="addNewCity" class="bg-primary m-1 p-2">Add City</button>
+    </div>
+              </div>
 
-                <InputError class="mt-2" :message="eventForm.errors.city" />
-            </div>
+            
             <div class="p-1">
-                <InputLabel for="maps_location" value="Maps Location" />
+                <InputLabel for="maps_location" value="Maps Embedded Link" />
 
                 <TextInput
                     id="maps_location"
                     type="text"
                     class="mt-1 block w-full"
                     v-model="eventForm.maps_location"
-                    required
+                    
                     autofocus
                     autocomplete="maps_location"
+                />
+
+                <InputError class="mt-2" :message="eventForm.errors.maps_location" />
+            </div>
+            <div class="p-1">
+                <InputLabel for="location" value=" Location" />
+
+                <TextInput
+                    id="location"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="eventForm.location"
+                    required
+                    autofocus
+                    autocomplete="location"
                 />
 
                 <InputError class="mt-2" :message="eventForm.errors.maps_location" />
@@ -399,6 +463,8 @@ import InputError from '../../Components/InputError.vue';
 import InputLabel from '../../Components/InputLabel.vue';
 import TextInput from '../../Components/TextInput.vue';
 import Textarea from 'primevue/textarea';
+import Button from 'primevue/button';
+import ChooseCity from '@/Components/ChooseCity.vue'
 import { useForm } from '@inertiajs/vue3';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import InputNumber from 'primevue/inputnumber';
@@ -407,6 +473,8 @@ import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import UploadImage from '../../Components/UploadImage.vue';
  
+
+import Select from 'primevue/select';
 
 const eventForm = useForm({
   event_image : '',
@@ -418,7 +486,7 @@ guidelines: '',
 type: '',
 start_date: '',
 end_date: '',
-
+category_id : null,
 city: '',
 price: ''
 });
@@ -429,15 +497,31 @@ const openAddEventModal =(id)=>{
 const closeAddEventModal = ()=>{
   isAddEventModalOpen.value = false;
 }
-
+import {useCityStore} from '@/stores/cityStore';
+const cityStore = useCityStore();
 const addEvent = ()=>{
-    console.log(eventForm);
+    eventForm.city  = cityStore.selectedCity;
     axios.post('event/add',eventForm)
     .then(()=>{ 
 fetchEvents();
 closeAddEventModal();    })
 }
-
+const isAddCategoryModalOpen = ref(false);
+const openAddCategoryModal =(id)=>{
+  isAddCategoryModalOpen.value = true;
+}
+const closeAddCategoryModal = ()=>{
+  isAddCategoryModalOpen.value = false;
+}
+const category = ref();
+const addCategory = ()=>{
+    axios.post('category/add',{
+      category: category.value
+    })
+    .then(()=>{ 
+fetchCategories();
+closeAddcategoryModal();    })
+}
 const event_id = ref('');
 const event_image = ref('');
 
@@ -445,10 +529,13 @@ const isUpdateEventModalOpen = ref(false);
 const openUpdateEventModal =(event)=>{
   isUpdateEventModalOpen.value = true;
   eventForm.name = event.name;
+  eventForm.category_id = event.category_id;
+
   eventForm.type = event.type;
   eventForm.start_date = event.start_date;
   eventForm.end_date = event.end_date;
-  eventForm.city = event.city;
+  eventForm.state = cityStore.selectedState;
+  eventForm.city  = cityStore.selectedCity;
   eventForm.price = event.price;
   eventForm.maps_location = event.maps_location;
   eventForm.about = event.about;
@@ -464,10 +551,12 @@ const closeUpdateEventModal = ()=>{
 }
 
 const updateEvent = (event_id)=>{
+  eventForm.state = cityStore.selectState;
+  eventForm.city = cityStore.selectedCity;
     axios.patch(`event/update/${event_id}`,eventForm)
     .then(()=>{
 fetchEvents();
-closeAddEventModal();    })
+closeUpdateEventModal();    })
 }
 
 const deleteEvent = (event)=>{
@@ -509,8 +598,30 @@ const fetchEvents = async () => {
     console.error('Error fetching events:', error);
   }
 };
+onMounted(cityStore.fetchCities);
+const categories = ref([]);
+const fetchCategories = async ()=>{
+  try {
+    const response = await axios.get('/categories');
+    categories.value = response.data; // Assuming your API returns an array of events
+    console.log(categories.value);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+}
+onMounted(()=>{
+  fetchEvents();
+  fetchCategories();
+});
+const newCity = ref(''); // Separate ref for new city input
 
-onMounted(fetchEvents);
+const addNewCity = () => {
+      if (newCity.value.trim()) {
+        cityStore.addCityLocally(newCity.value); // Add the new city to the store
+        selectedCity.value = newCity.value; // Set the new city as the selected city
+        newCity.value = ''; // Clear the input field
+      }
+    };
 
 </script>
 <style scoped>

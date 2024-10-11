@@ -1,11 +1,11 @@
-import './bootstrap'; // Assuming this file handles initial setup like Axios, etc.
+import './bootstrap.js'; // Assuming this file handles initial setup like Axios, etc.
 import '../css/app.css'; // Your custom CSS
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
-import lara from '@primevue/themes/lara';
+import aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css';
 import { Quasar } from 'quasar';
 import quasarLang from 'quasar/lang/en-US';
@@ -47,8 +47,9 @@ echo.private('chat')
   .listen('MessageSent', (e) => {
     messages.value.push({ user: e.user, text: e.message });
   });  
- 
-
+  
+  import { createPinia } from 'pinia';
+const pinia = createPinia();
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
@@ -56,9 +57,10 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .use(PrimeVue, { theme: { preset: lara } })
+            .use(PrimeVue, { theme: { preset: aura } })
             .use(Quasar, { plugins: {}, lang: quasarLang })
             .use(ToastService)
+            .use(pinia);
             app.directive('tooltip',Tooltip);
             AOS.init();
             app.mount(el);

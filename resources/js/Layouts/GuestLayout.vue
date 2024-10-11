@@ -11,75 +11,56 @@ import ChooseCity from '@/Components/ChooseCity.vue';
 const lat = ref();
 const long = ref();
 const location = ref('');
-const state = ref('');
+import {usePage } from '@inertiajs/vue3';
+const page = usePage();
+import { useCityStore } from '@/stores/cityStore';
+const visible= ref(false);
 
+// Store
+const cityStore = useCityStore();
+if(!cityStore.selectedCity && page.url == '/events/page'){
+    visible.value = true;
+}
 import Button from 'primevue/button';
-const getLocation = ()=>{
-    navigator.geolocation.getCurrentPosition(function(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-
-    lat.value = latitude;
-    long.value = longitude;
-    
-    // Use OpenStreetMap Nominatim API for reverse geocoding
-    var apiUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
-    
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.display_name) {
-                var locationName = data.display_name;
-                location.value = locationName;
-                state.value = data.address.state;
-                console.log(data);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching location:', error);
-        });
-}
-, function (error) {
-                alert(error.code + ": " + error.message);
-            }, {
-                enableHighAccuracy: true,
-                maximumAge: 10000,
-                timeout: 5000
-            });
-}
-onMounted(getLocation)
-
 
 import { Link } from '@inertiajs/vue3';
-const visible= ref(false);
 const showingNavigationDropdown = ref(false);
 
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen ">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
+                            <!-- <div class="shrink-0 flex items-center">
                                 <Link :href="route('dashboard')">
                                     <ApplicationLogo
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
                                 </Link>
-                            </div>
+                            </div> -->
                             
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex justify-between w-screen max-w-5xl items-center">
-                                <NavLink :href="route('home')" :active="route().current('home')">
-                                    Home
+                                <div class="w-1/2 flex justify-evenly">
+                                    <NavLink :href="route('home')" :active="route().current('home')">
+                                    HOME
                                 </NavLink>
+                                <NavLink :href="route('home')" :active="route().current('about')">
+                                    ABOUT US
+                                </NavLink>
+                                <NavLink :href="route('home')" :active="route().current('services')">
+                                    SERVICES
+                                </NavLink>
+                                </div>
+                                
                                 <div class="">
-                                    <Chip :label="state" icon="pi pi-map-marker" @click="visible=true" class="cursor-pointer" />
+                                    <Chip :label="cityStore.selectedCity" icon="pi pi-map-marker" @click="visible=true" class="cursor-pointer" />
                                     <Dialog v-model:visible="visible" modal header="Choose City" :style="{ width: '25rem' }">
             <ChooseCity/>
         </Dialog>
@@ -190,7 +171,7 @@ const showingNavigationDropdown = ref(false);
             </nav>
 
             <!-- Page Heading -->
-            <div class="w-screen h-full flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-primary"> 
+            <div class=" h-screen bg-primary sm:bg-primary-radial"> 
         
 
         <!-- <div

@@ -14,10 +14,7 @@ class NotificationsController extends Controller
 
     $notifications = $user->unreadNotifications;
 
-    // // Debugging output
-    // foreach ($notifications as $notification) {
-    //     dump($notification->data); // Should be 'array'
-    // }
+    
 
     $filteredNotifications = $notifications->filter(function ($notification) use ($eventId) {
         // Ensure that data is an array and event_id exists
@@ -44,5 +41,10 @@ class NotificationsController extends Controller
         }
     
     
+    }
+    public function getNotifications(){
+        $user = Auth::user();
+        $notifications = $user->notifications()->orderBy('created_at', 'desc')->get();
+        return response()->json(['likeNotifications'=>$notifications]);
     }
 }

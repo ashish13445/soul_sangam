@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserMatch;
 
 use App\Models\Interaction;
 use App\Models\User;
@@ -68,15 +69,18 @@ class InteractionController extends Controller
         //
     }
     public function like(request $request){
+        
         $user_id = Auth::id();
         $liked_user_id = $request->input('user_id');
        
         if($request->event_id) {
+ 
             $existingLike = Interaction::where('user_id',$user_id)
             ->where('interactable_id',$liked_user_id)
             ->where('category','event')->get();
-            if($existingLike){
-                return response()->json('user already liked');
+            
+            if ($existingLike->isNotEmpty()) {  // Use isNotEmpty() to check if the collection is not empty
+                return response()->json(['message' => 'User already liked'], 500);
             }
             Interaction::create([
                 'user_id' => $user_id,
@@ -92,8 +96,8 @@ class InteractionController extends Controller
             $existingLike = Interaction::where('user_id',$user_id)
             ->where('interactable_id',$liked_user_id)
             ->where('category','dating')->get();
-            if($existingLike){
-                return response()->json('user already liked');
+            if ($existingLike->isNotEmpty()) {  // Use isNotEmpty() to check if the collection is not empty
+                return response()->json(['message' => 'User already liked'], 500);
             }
             Interaction::create([
                 'user_id' => $user_id,
@@ -102,6 +106,7 @@ class InteractionController extends Controller
                 'category'=> 'dating',
                 'type'=>'like'
             ]);
+
         }
 
         $liker = User::find($user_id);
@@ -112,11 +117,29 @@ class InteractionController extends Controller
         $likedUser->notify(new LikedUserNotification($liker, $likedUser,$request->event_id));
     }
     else{
-        // $likedUser->notify(new LikedUserNotification($liker, $likedUser,null));
+        $likedUser->notify(new LikedUserNotification($liker, $likedUser));
         
 
     }
+    
+    $isMatch = Interaction::where('user_id', $liked_user_id)
+    ->where('interactable_id', $user_id)
+    ->exists();
 
+    if ($isMatch) {
+    // If there's a match, trigger a notification popup
+    UserMatch::create([
+        'user_id' => $user_id,
+        'matched_user_id' => $liked_user_id,
+    ]);
+
+    // Optionally, store the match in reverse order for easy querying
+    UserMatch::create([
+        'user_id' => $liked_user_id,
+        'matched_user_id' => $user_id,
+    ]);
+    return response()->json(['status' => 'matched'], 200);
+    }
 
         return response()->json(['message' => 'User liked successfully.']);
     }
@@ -125,11 +148,9 @@ class InteractionController extends Controller
     $user_id = Auth::id();
     $skipped_user_id = $request->input('user_id');
     $existingLike = Interaction::where('user_id',$user_id)
-            ->where('interactable_id',$liked_user_id)
+            ->where('interactable_id',$skipped_user_id)
             ->where('category','dating')->get();
-            if($existingLike){
-                return response()->json('user already skipped');
-            }
+            
 
     Interaction::create([
         'user_id' => $user_id,
@@ -139,5 +160,17 @@ class InteractionController extends Controller
     ]);
 
     return response()->json(['message' => 'Profile skipped successfully.']);
+}
+
+public function getMatches()
+{
+    $user = auth()->user();
+
+    // Fetch users the current user has matched with
+    $matches = $user->matches()->with('matchedUser')->get();
+
+    // Fetch users who matched the current user
+    
+    return response()->json($matches);
 }
 }
