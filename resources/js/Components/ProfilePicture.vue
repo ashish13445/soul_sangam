@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col p-2 justify-center items-center">
-    <div class=" sm:flex justify-center items-center">
+    <div class=" sm:flex justify-between items-center w-full">
       <!-- Loop through the images array, which will always have 3 elements -->
       <div v-for="(image, index) in profilePhotoUrls" :key="index" class="w-48 h-72 overflow-hidden ">
         <!-- Profile Picture or Placeholder -->

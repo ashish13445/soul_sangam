@@ -1,34 +1,41 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue'; // Import ref for reactive state
 import axios from 'axios';
 
-export const useCityStore = defineStore('cityStore', {
-  state: () => ({
-    selectedCity: null,  // Holds the currently selected city
-    cities: [],          // Holds the list of cities fetched from the API
-  }),
+export const useCityStore = defineStore('cityStore', () => {
+  // Define reactive state using refs
+  const selectedCity = ref(null); // Holds the currently selected city
+  const cities = ref([]); // Holds the list of cities fetched from the API
 
-  actions: {
-    // Fetch cities from the API
-    async fetchCities() {
-      try {
-        const response = await axios.get('/api/cities');  // API request or mocked data
-        this.cities = response.data;
-      } catch (error) {
-        console.error('Error fetching cities:', error);
-      }
-    },
-
-    // Add a new city to the cities array locally
-    addCityLocally(newCity) {
-      if (!this.cities.includes(newCity)) {
-        this.cities.push(newCity); // Add new city to the list
-        this.selectedCity = newCity; // Set the newly added city as selected
-      }
-    },
-
-    // Set the selected city
-    selectCity(city) {
-      this.selectedCity = city;
+  // Fetch cities from the API
+  const fetchCities = async () => {
+    try {
+      const response = await axios.get('/api/cities'); // API request
+      cities.value = response.data; // Set the cities array
+    } catch (error) {
+      console.error('Error fetching cities:', error);
     }
-  },
+  };
+
+  // Add a new city to the cities array locally
+  const addCityLocally = (newCity) => {
+    if (!cities.value.includes(newCity)) {
+      cities.value.push(newCity); // Add new city to the list
+      selectedCity.value = newCity; // Set the newly added city as selected
+    }
+  };
+
+  // Set the selected city
+  const selectCity = (city) => {
+    selectedCity.value = city;
+  };
+
+  // Return state and actions for use in components
+  return {
+    selectedCity,
+    cities,
+    fetchCities,
+    addCityLocally,
+    selectCity,
+  };
 });

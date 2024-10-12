@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{aE as s,u as c}from"./app-CqYFsAlS.js";const r="/build/assets/hero_logo-CdfTBgrw.png",t={},e={src:r,class:"w-96"};function n(_,a){return s(),c("img",e)}const m=o(t,[["render",n]]);export{m as A};

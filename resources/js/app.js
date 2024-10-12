@@ -22,31 +22,31 @@ import '@quasar/extras/material-icons/material-icons.css';
 
 // Create Inertia App
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-import Echo from "laravel-echo";
-import Pusher from 'pusher-js';
+// import Echo from "laravel-echo";
+// import Pusher from 'pusher-js';
 
-window.Pusher = Pusher;
-const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
-const pusherCluster = import.meta.env.VITE_PUSHER_APP_CLUSTER;
+// window.Pusher = Pusher;
+// const pusherKey = import.meta.env.VITE_PUSHER_APP_KEY;
+// const pusherCluster = import.meta.env.VITE_PUSHER_APP_CLUSTER;
 
-// Check if environment variables are available
-console.log('Pusher Key:', pusherKey);
-console.log('Pusher Cluster:', pusherCluster);
+// // Check if environment variables are available
+// console.log('Pusher Key:', pusherKey);
+// console.log('Pusher Cluster:', pusherCluster);
 
 
-// Initialize Laravel Echo with Pusher
-const echo = new Echo({
-  broadcaster: 'pusher',
-  key: pusherKey,
-  cluster: pusherCluster,
-  forceTLS: true,
-});
+// // Initialize Laravel Echo with Pusher
+// const echo = new Echo({
+//   broadcaster: 'pusher',
+//   key: pusherKey,
+//   cluster: pusherCluster,
+//   forceTLS: true,
+// });
 
-// Listen for messages
-echo.private('chat')
-  .listen('MessageSent', (e) => {
-    messages.value.push({ user: e.user, text: e.message });
-  });  
+// // Listen for messages
+// echo.private('chat')
+//   .listen('MessageSent', (e) => {
+//     messages.value.push({ user: e.user, text: e.message });
+//   });  
   
   import { createPinia } from 'pinia';
 const pinia = createPinia();
@@ -59,8 +59,8 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(PrimeVue, { theme: { preset: aura } })
             .use(Quasar, { plugins: {}, lang: quasarLang })
-            .use(ToastService)
-            .use(pinia);
+            .use(pinia)
+            .use(ToastService);
             app.directive('tooltip',Tooltip);
             AOS.init();
             app.mount(el);
