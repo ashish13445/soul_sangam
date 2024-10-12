@@ -5,3 +5,19 @@
 /.fleet
 /.idea
 /.vscode
+/storage/*
+!storage/.gitignore
+# Laravel Specific
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Vite Specific
+/public/dist/
+public/hot
+public/build
+# Laravel Storage
+
+
+# Miscellaneous
+*.DS_Store
