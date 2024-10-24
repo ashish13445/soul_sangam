@@ -57,7 +57,11 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .use(PrimeVue, { theme: { preset: aura } })
+            .use(PrimeVue, { theme: { preset: aura, options: {
+                prefix: 'p',
+                darkModeSelector: 'system',
+                cssLayer: false
+            } } })
             .use(Quasar, { plugins: {}, lang: quasarLang })
             .use(pinia)
             .use(ToastService);

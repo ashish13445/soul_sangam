@@ -7,8 +7,6 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
 
 import Dialog from 'primevue/dialog';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
@@ -46,12 +44,12 @@ const submit = () => {
 
         <Dialog v-model:visible="visible" model header="Login" pt:root:class="!border-0" pt:mask:class="backdrop-blur-md">
             <template #container="{ closeCallback }">
-                <div class="flex  " style="border-radius: 12px;">
-                    <ApplicationLogo/>
-                    <form @submit.prevent="submit" class=" p-10 pt-0 bg-white rounded mt-6 w-content">
+                <div class="md:flex overflow-y-scroll bg-primary text-black" style="border-radius: 12px;">
+                    <ApplicationLogo />
+                    <form @submit.prevent="submit" class=" p-10 pt-5 bg-white rounded  w-content">
 
                         <Link :href="route('home')"><i class="pi pi-home text-red-800" ></i></Link>
-<h1 class="text-xl text-center">
+<h1 class="text-xl text-black text-center">
                 Sign In
             </h1>
                         <div>

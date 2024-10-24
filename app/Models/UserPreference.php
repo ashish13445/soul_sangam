@@ -15,6 +15,10 @@ class UserPreference extends Model
         'end_age',
         'religion',
         'gender',
+        'relationship_status',
+        'occupation',
+        'education',
+        'income'
     ];
 
     // Define the relationship with the User model

@@ -17,10 +17,14 @@ class UserPreferenceController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'start_age' => 'nullable|integer|min:18|max:100',
-            'end_age' => 'nullable|integer|min:18|max:100',
+            'start_age' => 'nullable|integer|min:25|max:45',
+            'end_age' => 'nullable|integer|min:25|max:45',
             'religion' => 'nullable|string|max:255',
-            'gender' => 'nullable|string|in:Male,Female,Non-Binary',
+            'gender' => 'nullable|string|in:Male,Female',
+            'income'=>'nullable|string',
+            'occupation'=>'nullable|string',
+            'education'=>'nullable|string',
+            'relationship_status'=>'nullable|string'
         ]);
 
         // Get the authenticated user
@@ -34,6 +38,11 @@ class UserPreferenceController extends Controller
                 'end_age' => $request->input('end_age'),
                 'religion' => $request->input('religion'),
                 'gender' => $request->input('gender'),
+                'income'=>$request->input('income'),
+                'relationship_status'=>$request->input('relationship_status'),
+                'education'=>$request->input('education'),
+                'occupation'=>$request->input('occupation'),
+
             ]
         );
 

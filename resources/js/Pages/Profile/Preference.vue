@@ -1,6 +1,6 @@
 <template>
 <AuthenticatedLayout>
-    <div class=" py-12 px-8 bg-primary-radial">
+    <div class="py-5 md:py-12 px-5 md:px-60 bg-primary-radial">
         <UpdatePreference/>
 
     </div>

@@ -23,20 +23,15 @@ defineProps({
     <AuthenticatedLayout>
        
 
-        <div class="py-12 w-screen md:px-8 bg-primary-radial">
+        <div class="py-12 w-full md:px-60 bg-primary-radial">
                 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg md:flex w-full ">
-                 <div class="">
+                <div class="p-4 sm:px-20 sm:py-10 bg-white shadow sm:rounded-lg md:flex w-full ">
                    
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
                         class=""
                     />
-                    </div>
-                    <div class="">
-                        <!-- <ProfilePicture /> -->
-                    </div>
                 </div>
                 
 

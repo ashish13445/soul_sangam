@@ -31,14 +31,13 @@ const submit = () => {
         <Dialog v-model:visible="visible" modal   >
             
             <template #container="{ closeCallback }">
-                <div class="sm:flex  sm:p-0">
                     
-                <div class="flex items-center bg-primary" >
+                <div class="md:flex items-center bg-primary text-black overflow-y-scroll" >
                     <ApplicationLogo/>
-                  </div>  
+                   
         <form @submit.prevent="submit" class="p-10  bg-white rounded  ">
             <Link :href="route('home')"><i class="pi pi-home text-red-800" ></i></Link>
-            <h1 class="text-xl text-center">
+            <h1 class="text-xl text-black text-center">
                 Sign Up
             </h1>
             <div>

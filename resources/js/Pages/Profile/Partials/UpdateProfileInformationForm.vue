@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import RadioButton from 'primevue/radiobutton';
-    
+import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
 
 import { Link, useForm, usePage } from '@inertiajs/vue3';
@@ -29,18 +29,96 @@ const form = useForm({
     dob: user.dob,
     occupation : user.occupation,
     education : user.education, 
+    relationship_status: user.relationship_status,
+    kids : user.kids,
     city: user.city,
     allow_dating : user.allow_dating,
     gender: user.gender,
     bio: user.bio,
+    income: user.income,
     religion: user.religion,
 });
 const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddhist','Jewish'])
+const relationship_statuses = ref(['Single','Divorced','Widow']);
+import Dropdown from 'primevue/dropdown';
+const occupations = ref([
+  'Doctor',
+  'Engineer',
+  'Teacher',
+  'Lawyer',
+  'Accountant',
+  'Architect',
+  'Software Developer',
+  'Graphic Designer',
+  'Civil Engineer',
+  'Data Scientist',
+  'Mechanical Engineer',
+  'Pharmacist',
+  'Nurse',
+  'Dentist',
+  'Pilot',
+  'Marketing Manager',
+  'Sales Executive',
+  'Financial Analyst',
+  'Human Resources Manager',
+  'Entrepreneur',
+  'Chef',
+  'Journalist',
+  'Photographer',
+  'Consultant',
+  'Electrician',
+  'Plumber',
+  'Carpenter',
+  'Project Manager',
+  'Digital Marketer',
+  'Business Analyst',
+  'Fashion Designer'
+]);
+const educations = ref([
+  'High School Diploma',
+  'Associate Degree',
+  'Bachelor’s Degree in Arts (BA)',
+  'Bachelor’s Degree in Science (BSc)',
+  'Bachelor’s Degree in Commerce (BCom)',
+  'Bachelor of Engineering (BE)',
+  'Bachelor of Technology (BTech)',
+  'Bachelor of Medicine, Bachelor of Surgery (MBBS)',
+  'Bachelor of Laws (LLB)',
+  'Master of Arts (MA)',
+  'Master of Science (MSc)',
+  'Master of Business Administration (MBA)',
+  'Master of Commerce (MCom)',
+  'Master of Technology (MTech)',
+  'Doctor of Philosophy (PhD)',
+  'Doctor of Medicine (MD)',
+  'Chartered Accountant (CA)',
+  'Diploma in Education',
+  'Diploma in Engineering',
+  'Postgraduate Diploma in Management (PGDM)',
+  'Certified Public Accountant (CPA)',
+  'Certified Information Systems Auditor (CISA)',
+  'Master of Laws (LLM)',
+  'Bachelor of Education (B.Ed)',
+  'Master of Education (M.Ed)',
+  'Diploma in Computer Science',
+  'Diploma in Graphic Design',
+  'Vocational Training'
+]);
+const incomeRanges = ref([
+      'Less than ₹2 Lakhs',
+       '₹2 Lakhs - ₹5 Lakhs' ,
+       '₹5 Lakhs - ₹10 Lakhs' ,
+      '₹10 Lakhs - ₹15 Lakhs' ,
+      '₹15 Lakhs - ₹20 Lakhs' ,
+      '₹20 Lakhs - ₹30 Lakhs' ,
+      '₹30 Lakhs - ₹50 Lakhs' ,
+      'More than ₹50 Lakhs' 
+    ]);
 
 </script>
 
 <template>
-    <section>
+    <section class="w-full">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
 
@@ -135,13 +213,30 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
         <RadioButton v-model="form.gender" inputId="female" name="gender" value="Female" />
         <label for="female" class="ml-2">Female</label>
     </div>
-    <div class="flex items-center">
-        <RadioButton v-model="form.gender" inputId="others" name="gender" value="Others" />
-        <label for="others" class="ml-2">Others</label>
-    </div>
+
   
 </div>
 </div>
+<div class=" mt-2  items-center">
+                <InputLabel for="relationship_status" value="Relationship Status" />
+  
+   <Select v-model="form.relationship_status"  :options="relationship_statuses"  placeholder="Choose your Rleationship Status" class="w-full md:w-56" />
+
+</div>
+<div v-if="form.relationship_status == 'Divorced' || form.relationship_status == 'Widow'">
+                <InputLabel for="Kids" value="Do you have Kids? if  yes then how many?" />
+
+                <InputNumber
+                    id="name"
+                    type="number"
+                    class="mt-1 block w-full"
+                    v-model="form.kids"
+                    required
+                    autofocus
+                    autocomplete="name"
+                />
+
+            </div>
             <!-- <div class="mt-4">
                     <InputLabel for="profile_picture" value="Profile Picture" />
                     <input
@@ -154,7 +249,7 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
                     <InputError class="mt-2" :message="form.errors.profile_picture" />
                 </div> -->
 
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <InputLabel for="occupation" value="Occupation" />
 
                 <TextInput
@@ -167,9 +262,31 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
                 />
 
                 <InputError class="mt-2" :message="form.errors.occupation" />
-            </div>
+            </div> -->
+            <div class=" mt-2  items-center">
+                <InputLabel for="occupation" value="Occupation" />
+  
+   <Select v-model="form.occupation" editable  :options="occupations"  placeholder="Choose your occupation" class="w-full md:w-56" />
 
-            <div class="mt-4">
+</div>
+<div class=" mt-2  items-center">
+                <InputLabel for="education" value="Education" />
+  
+   <Select v-model="form.education" editable  :options="educations"  placeholder="Choose your education" class="w-full md:w-56" />
+
+</div>
+<div class="p-field">
+    <label for="income">Income </label>
+    <dropdown 
+      v-model="form.income" 
+      :options="incomeRanges" 
+      placeholder="Select an Income Range" 
+      class="w-full" />
+   
+  </div>
+
+
+            <!-- <div class="mt-4">
                 <InputLabel for="education" value="Education" />
 
                 <TextInput
@@ -182,7 +299,7 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
                 />
 
                 <InputError class="mt-2" :message="form.errors.education" />
-            </div>
+            </div> -->
             
             <div class="mt-4">
                 <InputLabel for="city" value="City" />
@@ -198,20 +315,7 @@ const religions = ref(['Hindu','Muslim','Christian','Sikh','Parsi','Jain','Buddh
 
                 <InputError class="mt-2" :message="form.errors.city" />
             </div>
-            <div class="mt-4">
-                <InputLabel for="bio" value="Bio" />
-
-                <TextInput
-                    id="bio"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.bio"
-                    required
-                    autocomplete="bio"
-                />
-
-                <InputError class="mt-2" :message="form.errors.bio" />
-            </div>
+            
             
             <div class="mt-4">
                 <InputLabel for="allow_dating" value="Allow Dating" />

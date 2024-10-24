@@ -32,7 +32,13 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-'dob' => 'required|date|date_format:Y-m-d|before_or_equal:' . now()->subYears(25)->format('Y-m-d'),
+            'dob' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                'before_or_equal:' . now()->subYears(25)->format('Y-m-d'),
+                'after_or_equal:' . now()->subYears(45)->format('Y-m-d'),
+            ],
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

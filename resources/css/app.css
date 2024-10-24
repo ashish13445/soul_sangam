@@ -2,3 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --primary-text-color: #1f2937; /* Default text color for light mode */
+    --secondary-text-color: #4b5563; /* Lighter text color for light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-text-color: #0000; /* Text color for dark mode */
+        --secondary-text-color: #ffff; /* Lighter text color for dark mode */
+    }
+}
+
+/* Apply the colors to your elements */
+body {
+    color: var(--primary-text-color);
+    background-color: #ffffff; /* Default background for light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1f2937;
+        color: #1f2937; /* Background for dark mode */
+    }
+}
+
+/* Specific styles for headings and paragraphs */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-text-color);
+}
+
+/* p, span, a {
+    color: var(--secondary-text-color);
+} */
