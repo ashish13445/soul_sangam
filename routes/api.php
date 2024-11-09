@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/profile', [ProfileController::class, 'destroy']);
             Route::get('/notifications',[NotificationsController::class,'getNotifications']);
 });
-
+Route::get('/eventDates',[EventController::class,'getEventDates']);
 Route::get('/cities',[EventController::class,'getCities']);
 // });
 

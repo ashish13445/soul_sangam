@@ -38,7 +38,7 @@ class EventController extends Controller
     private function indexForAdmin()
     {
         // Logic for admin, show all events or specific admin logic
-        return Event::with('tickets')->get();
+        return Event::with('tickets.user')->get();
 
     }
 
@@ -47,10 +47,18 @@ class EventController extends Controller
     {
         // Logic for regular users, show only certain events or specific user logic
         $today = Carbon::today();
-        return Event::with('tickets')
-        ->whereDate('start_date', '<=', $today)
-        ->whereDate('end_date', '>=', $today)
-        ->get();
+        $events = Event::with('tickets')->get(); // Fetch all events
+
+        // Filter events based on event_dates
+        return $events->filter(function ($event) use ($today) {
+            // Decode the JSON array (assuming event_dates is stored as a JSON string)
+            $eventDates = $event->event_dates; // Ensure it's an array
+    
+            // Check if any date is greater than today
+            return collect($eventDates)->contains(function ($date) use ($today) {
+                return Carbon::parse($date)->isFuture(); // Check if the date is in the future
+            });
+        })->values()->toArray();
     }
     public function event($id)
     {
@@ -72,11 +80,28 @@ class EventController extends Controller
  
     }
     public function store(Request $request)
-    {
-        $event = Event::create($request->all());
-        
-        return response()->json([$event]);
-    }
+{
+    // Retrieve the event_dates from the request and sort them
+    $eventDates = collect($request->event_dates) // Convert to a collection
+        ->map(function ($date) {
+            return Carbon::parse($date); // Convert each date to a Carbon instance
+        })
+        ->sort() // Sort the dates in ascending order
+        ->values() // Reset the array keys
+        ->map(function ($date) {
+            return $date->toDateString(); // Optionally, format the date to a string
+        })
+        ->toArray(); // Convert back to an array
+
+    // Add the sorted event_dates back to the request data
+    $request->merge(['event_dates' => $eventDates]);
+
+    // Create the event with the sorted event_dates
+    $event = Event::create($request->all());
+
+    // Return the event as JSON
+    return response()->json([$event]);
+}
 
     public function authShow($id)
     {
@@ -141,12 +166,35 @@ class EventController extends Controller
         return response()->json("Event Deleted successfully");
     }
 
-    public function update( string $id, Request $request,)
-    {
-        $event = Event::findOrFail($id);
-        $event->update($request->all());
-        return response()->json('Event Updated successfully');
+    public function update(string $id, Request $request)
+{
+    // Find the event by ID
+    $event = Event::findOrFail($id);
+
+    // Retrieve the event_dates from the request and sort them
+    if ($request->has('event_dates')) {
+        $eventDates = collect($request->event_dates) // Convert to a collection
+            ->map(function ($date) {
+                return Carbon::parse($date); // Convert each date to a Carbon instance
+            })
+            ->sort() // Sort the dates in ascending order
+            ->values() // Reset the array keys
+            ->map(function ($date) {
+                return $date->toDateString(); // Optionally, format the date to a string
+            })
+            ->toArray(); // Convert back to an array
+
+        // Merge the sorted event_dates back into the request data
+        $request->merge(['event_dates' => $eventDates]);
     }
+
+    // Update the event with the new data
+    $event->update($request->all());
+
+    // Return a success response
+    return response()->json('Event Updated successfully');
+}
+
 
     public function getCities()
 {
@@ -155,5 +203,27 @@ class EventController extends Controller
 
     // Return the cities as an array
     return response()->json($cities);
+}
+
+public function getEventDates()
+{
+    // Fetch all events with their event_dates
+    $events = Event::select('event_dates')->get();
+
+    // Step 2: Extract unique event dates
+    $eventDates = [];
+
+    foreach ($events as $event) {
+        $dates = $event->event_dates;
+        if (is_array($dates)) {
+            $eventDates = array_merge($eventDates, $dates);
+        }
+    }
+
+    // Remove duplicates and re-index the array
+    $uniqueEventDates = array_unique($eventDates);
+    sort($uniqueEventDates); // Optional: Sort the dates
+
+    return response()->json($uniqueEventDates);
 }
 }

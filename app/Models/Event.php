@@ -24,10 +24,13 @@ class Event extends Model
         'about',
         'terms_and_conditions',
         'guidelines',
-        'price'
+        'price',
+        'event_dates'
     ];  
 
-
+    protected $casts = [
+        'event_dates' => 'array', // Cast to array
+    ];
     public function tickets()
     {
         return $this->hasMany(Ticket::class);

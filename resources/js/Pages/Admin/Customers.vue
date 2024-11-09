@@ -1,6 +1,6 @@
 <template>
     <header class="flex items-center ">
-    <h5 class="font-extrabold p-2">
+    <h5 class="dark:text-white font-extrabold p-2">
     Customers    
     </h5>
     </header>
@@ -52,7 +52,6 @@ const columns = [
   },
   { name: 'email', align: 'center', label: 'Email', field: 'email' , align: 'left' },
 
-  { name: 'stripe_customer_id', align: 'center', label: 'Stripe Customer Id', field: 'stripe_customer_id' , align: 'left' },
   { name: 'dob', label: 'DOB', field: 'dob' , align: 'left'},
   { name: 'age', label: 'Age', field: 'age', align: 'left',sortable: true},
   { name: 'occupation', label:'Occupation', field: 'occupation', align: 'left',sortable: true},

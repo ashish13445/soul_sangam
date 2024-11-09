@@ -43,6 +43,17 @@
                   Events
                 </q-item-section>
               </q-item>
+
+              <q-item  clickable v-ripple :active="activeItem === 'manageEvents'" @click="activeItem = 'manageEvents'">
+                <q-item-section avatar>
+                  <q-icon name="star" />
+                </q-item-section>
+  
+                <q-item-section>
+                  Manage Events
+                </q-item-section>
+              </q-item>
+  
   
               
   
@@ -71,6 +82,9 @@
             <div v-if="activeItem === 'customers'">
             <Customers/>
             </div>
+            <div v-if="activeItem === 'manageEvents'">
+            <ManageEvents/>
+            </div>
           </q-page>
         </q-page-container>
       </q-layout>
@@ -86,6 +100,7 @@ const drawer = ref(false);
 const miniState = ref(true);
 import { QPage, QList, QItem, QItemSection, QIcon } from 'quasar';
 import { Link } from '@inertiajs/inertia-vue3';
+import ManageEvents from './Admin/ManageEvents.vue';
 const activeItem = ref('events'); // Default active item
 </script>
 

@@ -8,6 +8,7 @@ use Razorpay\Api\Api;
 use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class RazorpayController extends Controller
 {
@@ -25,12 +26,15 @@ class RazorpayController extends Controller
             $api = new Api('rzp_test_2BFPuAnuz8ZT1a', 'jckc5pJUsEbi2uULD3qcyYM5');
     
             $eventId = $request->input('event_id');
+            $eventDate = $request->input('event_date');
+
             $event = Event::find($eventId);
             $user = Auth::user();
     
             // Check if the user already has a ticket for the event
             $existingTicket = Ticket::where('event_id', $eventId)
                                     ->where('user_id', $user->id)
+                                    ->where('event_date',$eventDate)
                                     ->first();
     
             if ($existingTicket) {
@@ -80,6 +84,8 @@ class RazorpayController extends Controller
 
         // Payment is valid, create the ticket or perform other actions
         $eventId = $request->input('event_id');
+        $eventDate = $request->input('event_date');
+        $formattedEventDate = Carbon::parse($eventDate)->format('Y-m-d H:i:s');
             $user = Auth::user();
             $event = Event::findOrFail($eventId);
 
@@ -89,6 +95,7 @@ class RazorpayController extends Controller
             $ticket = Ticket::create([
                 'user_id' => $user->id,
                 'event_id' => $eventId,
+                'event_date'=>$formattedEventDate,
                 'ticket_code' => $ticketCode 
             ]);
             Mail::to($user->email)->send(new TicketMail($event, $ticket));

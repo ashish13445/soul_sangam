@@ -52,7 +52,17 @@ const fetchFilters = ()=>{
      });
 
 }
+const eventDates = ref([]);
+const fetchEventDates = ()=>{
+     axios.get('/api/eventDates').then((res)=>{
+        eventDates.value = res.data;
+     });
+
+}
 onMounted(fetchFilters);
+onMounted(fetchEventDates);
+const selectedEventDate = ref("");
+
 const searchQuery = ref('');
 const filteredEvents = computed(() => {
     let filtered = events.value;
@@ -87,6 +97,11 @@ if (searchQuery.value.trim() !== '') {
     event.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 }
+if (selectedEventDate.value) {
+    filtered = filtered.filter((event) =>
+      event.event_dates.includes(selectedEventDate.value)
+    );
+  }
 
 return filtered;
 });
@@ -99,7 +114,7 @@ const sortEvents = () => {
   if (selectedSortOption.value === 'name') {
     events.value.sort((a, b) => a.name.localeCompare(b.name));
   } else if (selectedSortOption.value === 'date') {
-    events.value.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+    // events.value.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
   } 
 };
 
@@ -109,12 +124,10 @@ const sortEvents = () => {
 <template>
     <Head title="Events" />
     <AuthenticatedLayout>
-        
-    
-        <div class=" w-screen h-auto bg-primary-radial  flex   p-10 sm:pb-10 justify-evenly ">
+        <div class="  h-auto bg-primary-radial  flex  p-10 sm:pb-10 justify-evenly ">
            <img src="../../../../images/decoration.png" class="hidden sm:flex sm:w-40 lg:w-80"/>
            <div class="flex flex-col justify-center items-center">
-            <h1 class="text-5xl font-extrabold text-white">Discover Upcoming Events</h1>
+            <h1 class="text-5xl font-extrabold text-white ">Discover Upcoming Events</h1>
             <p class="text-xl text-white py-8">Find the best events in your area and get tickets now.</p>
             <IconField class="w-full lg:w-1/2">
     <InputIcon class="pi pi-search " style="color: white ; font-weight: bold;"/>
@@ -130,10 +143,10 @@ const sortEvents = () => {
         </div>
         
 
-        <div class="bg-white w-screen flex justify-center p-5">
+        <div class="bg-white  flex justify-center p-5">
             <div class="w-full max-w-7xl flex justify-between">
                 <div>
-                    <Button label="Filters" class="text-sm md:text-sm "icon="pi pi-filter" severity="contrast" text outlined @click="toggle" />
+                    <Button label="Filters" class="text-sm md:text-sm "icon="pi pi-filter" severity="secondary"  outlined @click="toggle" />
                     <Popover ref="op">
                         <div class="flex flex-col gap-4">
                             <div>
@@ -155,26 +168,22 @@ const sortEvents = () => {
           </select> 
                 </div>
                 
-                <Button label="All Dates" class="sm:mx-5" icon="pi pi-calendar" severity="contrast" text outlined  @click="toggleDates"/>
-                <Popover ref="da">
-                        <div class="flex flex-col gap-4">
-                            <div>
-                                
-                            </div>
-                        </div>
-                    </Popover>
+                <select v-model="selectedEventDate" class="" icon="pi pi-calendar" severity="secondary">
+  <option value="">All dates</option>
+  <option v-for="date in eventDates" :key="date" :value="date">{{ new Date(date).toLocaleDateString() }}</option>
+</select>
 
             </div>
          
         </div>
      
-<div class="w-screen flex justify-center">
-    <p class="bg-white w-full max-w-7xl">
+<div class=" flex justify-center">
+    <p class="bg-white w-full px-20">
         <div v-if="selectedFilter" class="w-full flex  py-3">
             <Chip removable @remove="removeFilter">{{ selectedFilter.name }}</Chip>
         </div>         </p>
 </div>
-    <div class="w-screen flex justify-center bg-white">
+    <div class=" flex justify-center bg-white">
         
 
     <div class="grid grid-cols-1  md:grid-cols-3 grid-flow-row gap-0 w-full max-w-7xl  ">
@@ -189,7 +198,7 @@ const sortEvents = () => {
   class="w-full h-40 object-cover"
 />        </template>
         <template #title>{{ event.name }}</template>
-        <template #subtitle>{{ new Date(event.start_date).toDateString() }} - {{new Date(event.end_date).toDateString() }}</template>
+        <template #subtitle>{{ new Date(event.event_dates[0]).toDateString() }} onwards</template>
         <template #content>
             <p class="m-0">
                 <Chip :label="event.type" class="border-2 border-blue-600 text-blue-600"/>
@@ -212,7 +221,7 @@ const sortEvents = () => {
     </div>
 </div>
     
-</AuthenticatedLayout>
+    </AuthenticatedLayout>
 </template>
 <style scoped>
 .p-inputtext{

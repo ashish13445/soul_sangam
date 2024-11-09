@@ -1,6 +1,6 @@
 <template>
     <header class="flex items-center ">
-    <h5 class=" px-4">
+    <h5 class="dark:text-white  px-4">
     Events    
      <button @click="openAddEventModal"><i class="pi pi-calendar-plus mx-5" style="font-size: 20px ;font-weight: bold; color: blue;"></i></button>
      <Button  @click="openAddCategoryModal" label="categories" class="mx-5" icon="pi pi-box" size="small" severity="contrast" text outlined />
@@ -56,9 +56,9 @@
     </div>
     </div>
 
-                <InputError class="mt-2" :message="eventForm.errors.name" />
+                <InputError class="mt-2" :message="eventForm.errors.type" />
             </div>
-            <div class="p-1 flex w-full">
+            <!-- <div class="p-1 flex w-full">
               <div class="w-1/2 p-1">
                 <InputLabel for="start_date" value="Start Date" />
 
@@ -91,18 +91,30 @@
                     <InputError class="mt-2" :message="eventForm.errors.end_date" />
               </div>
                 
-            </div>
+            </div> -->
+            <div class="p-1">
+    <InputLabel for="scattered_dates" value="Select Dates" />
+    <DatePicker 
+      v-model="eventForm.event_dates" 
+      selectionMode="multiple" 
+      :manualInput="false" 
+      required
+      placeholder="Choose dates" 
+      class="mt-1 " 
+    />
+    <InputError class="mt-2" :message="eventForm.errors.event_dates" />
+  </div>
             
             <div class="p-1">
                 <InputLabel for="city" value="City" />
-                <select v-model="cityStore.selectedCity">
+                <select v-model="cityStore.selectedCity" required>
       <option v-for="city in cityStore.cities" :key="city" :value="city">{{ city }}</option>
       <option value="other">Other (Add New City)</option>
     </select>
 
     <!-- Input field appears if "Other" is selected -->
     <div v-if="cityStore.selectedCity === 'other'">
-      <input type="text" v-model="newCity" placeholder="Enter your city" />
+      <input type="text" v-model="newCity" placeholder="Enter your city" required>
       <button @click="addNewCity" class="bg-primary m-1 p-2">Add City</button>
     </div>
               </div>
@@ -114,7 +126,7 @@
                     type="text"
                     class="mt-1 block w-full"
                     v-model="eventForm.maps_location"
-                    
+                    required
                     autofocus
                     autocomplete="maps_location"
                 />
@@ -266,7 +278,7 @@
 
                 <InputError class="mt-2" :message="eventForm.errors.name" />
             </div>
-            <div class="p-1 flex w-full">
+            <!-- <div class="p-1 flex w-full">
               <div class="w-1/2 p-1">
                 <InputLabel for="start_date" value="Start Date" />
 
@@ -297,9 +309,21 @@
                     />
 
                     <InputError class="mt-2" :message="eventForm.errors.end_date" />
-              </div>
+              </div> -->
                 
-            </div>
+            <!-- </div> -->
+            <div class="p-1">
+    <InputLabel for="scattered_dates" value="Select Dates" />
+    <DatePicker 
+      v-model="eventForm.event_dates" 
+      selectionMode="multiple" 
+      :manualInput="false" 
+      required
+      placeholder="Choose dates" 
+      class="mt-1 " 
+    />
+    <InputError class="mt-2" :message="eventForm.errors.event_dates" />
+  </div>
             <div class="p-1">
                 <InputLabel for="city" value="City" />
                 <select v-model="cityStore.selectedCity">
@@ -451,6 +475,20 @@
     />
   </q-td>
 </template>
+<template v-slot:body-cell-event_dates="props">
+    <q-td :props="props">
+      <div class="flex flex-wrap">
+        <q-chip
+          v-for="date in props.row.event_dates" 
+          :key="date" 
+          class="q-mb-xs"
+          
+        >
+          {{ new Date(date).toDateString() }}
+        </q-chip>
+      </div>
+    </q-td>
+  </template>
 </q-table>
   </div>
     </section>
@@ -472,7 +510,7 @@ import RadioButton from 'primevue/radiobutton';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import UploadImage from '../../Components/UploadImage.vue';
- 
+ import DatePicker from 'primevue/datepicker';
 
 import Select from 'primevue/select';
 
@@ -483,9 +521,10 @@ maps_location: '',
 about: '',
 terms_and_conditions: '',
 guidelines: '',
-type: '',
-start_date: '',
-end_date: '',
+type: 'dating',
+// start_date: '',
+// end_date: '',
+event_dates:[],
 category_id : null,
 city: '',
 price: ''
@@ -530,14 +569,17 @@ const openUpdateEventModal =(event)=>{
   isUpdateEventModalOpen.value = true;
   eventForm.name = event.name;
   eventForm.category_id = event.category_id;
-
+  eventForm.event_image = event.event_image;
   eventForm.type = event.type;
-  eventForm.start_date = event.start_date;
-  eventForm.end_date = event.end_date;
-  eventForm.state = cityStore.selectedState;
-  eventForm.city  = cityStore.selectedCity;
+  // eventForm.start_date = event.start_date;
+  // eventForm.end_date = event.end_date;
+  eventForm.event_dates = event.event_dates.map(date => new Date(date));
+  // eventForm.state = cityStore.selectedState;
+  cityStore.selectedCity  = event.city;
   eventForm.price = event.price;
   eventForm.maps_location = event.maps_location;
+  eventForm.location = event.location;
+
   eventForm.about = event.about;
   eventForm.terms_and_conditions = event.terms_and_conditions;
   eventForm.guidelines = event.guidelines;
@@ -579,8 +621,8 @@ const columns = [
 
   { name: 'city', align: 'center', label: 'City', field: 'city' , align: 'left' },
   { name: 'price', label: 'Price', field: 'price' , align: 'left'},
-  { name: 'start_date', label: 'Start Date', field: 'start_date', align: 'left',sortable: true},
-  { name: 'end_date', label: 'End Date', field: 'end_date', align: 'left',sortable: true},
+  { name: 'event_dates', label: 'Dates', field: 'event_dates', align: 'left',sortable: true},
+  // { name: 'end_date', label: 'End Date', field: 'end_date', align: 'left',sortable: true},
   { name: 'sold_tickets', align: 'center', label: 'Sold Tickets', field: row=>row.tickets.length , align: 'left' },
 
   {name: 'actions',label: 'Actions' , align: 'left'}
